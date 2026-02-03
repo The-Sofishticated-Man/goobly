@@ -1,10 +1,11 @@
 "use client";
+import { BaseExperiment } from "@/core/BaseExperiment";
 import { ReflectionOfLightExperiment } from "@/modules/ReflectionOfLightExperiment";
 import { useEffect, useRef } from "react";
 
 export default function Playground({ module }: { module: string }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const experimentRef = useRef<ReflectionOfLightExperiment | null>(null);
+  const experimentRef = useRef<BaseExperiment| null>(null);
 
   useEffect(() => {
     if (!canvasRef.current) return;
