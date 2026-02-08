@@ -1,8 +1,9 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #1a1a1a;
+  --foreground: #e0e0e0;
+  --accent: #d4af37;
 }
 
 @theme inline {
@@ -14,8 +15,9 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #1a1a1a;
+    --foreground: #e0e0e0;
+    --accent: #d4af37;
   }
 }
 
@@ -23,4 +25,47 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+.lesson-container {
+  text-align: center;
+  padding: 2rem;
+}
+
+.lesson-container h1 {
+  font-size: 3.5rem;
+  font-weight: bold;
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.15em;
+}
+
+.lesson-container h2 {
+  font-size: 1.5rem;
+  color: #999;
+  margin-bottom: 2rem;
+  font-weight: normal;
+  letter-spacing: 0.05em;
+}
+
+.lesson-container h3 {
+  font-size: 1.3rem;
+  color: var(--accent);
+  margin: 2rem 0 1rem 0;
+}
+
+.lesson-container p {
+  font-size: 1rem;
+  line-height: 1.6;
+  text-align: left;
+  margin: 1.5rem 0;
+  color: #cccccc;
+}
+
+canvas {
+  margin-left: auto;
+  display: block;
+  height: 300px;
+  width: 300px;
+  position: relative;
 }
