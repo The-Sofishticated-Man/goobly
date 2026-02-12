@@ -3,14 +3,14 @@ import { Entity } from "@/core/Entity";
 import { Mirror } from "./Mirror";
 
 export class LaserPointer extends Entity {
-  protected defaultTexturePath = "/LaserPointer.png";
+  protected defaultTexturePath = "/laserPointer.png";
 
   private beam = new Graphics();
 
   start(): void {
-    this.sprite.x = 100;
-    this.sprite.y = 250;
-    this.sprite.scale.set(0.3);
+    this.visual.x = 100;
+    this.visual.y = 250;
+    this.visual.scale.set(0.6);
     this.container.addChild(this.beam);
   }
 
@@ -18,17 +18,17 @@ export class LaserPointer extends Entity {
     this.beam.clear();
 
     // laser origin (sprite center)
-    const origin = new Point(this.sprite.x + 120, this.sprite.y - 3);
+    const origin = new Point(this.visual.x + 120, this.visual.y);
 
     // initial ray direction (rightward)
     const dir = new Point(
-      Math.cos(this.sprite.rotation),
-      Math.sin(this.sprite.rotation)
+      Math.cos(this.visual.rotation),
+      Math.sin(this.visual.rotation),
     );
     this.beam
       .moveTo(origin.x, origin.y)
       .lineTo(origin.x + 1000, origin.y)
-      .stroke({ width: 20, color: 0xff0000 });
+      .stroke({ width: 20, color: 0xf5ce5c });
     // this.castRay(origin, dir, 0);
   }
 
@@ -36,7 +36,7 @@ export class LaserPointer extends Entity {
     if (bounce > 1) return; // Limit to 1 reflection for now
 
     const mirrors = this.experiment.entities.filter(
-      (e) => e instanceof Mirror
+      (e) => e instanceof Mirror,
     ) as Mirror[];
 
     let closestDist = Infinity;
@@ -60,7 +60,7 @@ export class LaserPointer extends Entity {
       // draw to infinite
       const end = new Point(
         origin.x + direction.x * 2000,
-        origin.y + direction.y * 2000
+        origin.y + direction.y * 2000,
       );
       this.drawSegment(origin, end);
       return;
@@ -74,7 +74,7 @@ export class LaserPointer extends Entity {
     const dot = direction.x * normal.x + direction.y * normal.y;
     const reflect = new Point(
       direction.x - 2 * dot * normal.x,
-      direction.y - 2 * dot * normal.y
+      direction.y - 2 * dot * normal.y,
     );
 
     this.castRay(closestPoint, reflect, bounce + 1);

@@ -8,7 +8,7 @@ export abstract class BaseExperiment {
     protected canvas: HTMLCanvasElement,
     protected width: number = 500,
     protected height: number = 500,
-    protected backgroundColor: number = 0xffffff
+    protected backgroundColor: number = 0xffffff,
   ) {
     this.app = new Application();
   }
@@ -34,13 +34,13 @@ export abstract class BaseExperiment {
     this.app.ticker.add((delta) => entity.update(delta));
     return this;
   }
-  // runs once at the beginning
-  abstract start(): void | Promise<void>;
-  // runs on every frame
-  abstract update(ticker: Ticker): void;
-
   // cleanup resources
   destroy(): void {
     this.app.destroy(true, { children: true, texture: true });
   }
+
+  // runs once at the beginning
+  abstract start(): void | Promise<void>;
+  // runs on every frame
+  abstract update(ticker: Ticker): void;
 }

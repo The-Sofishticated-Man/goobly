@@ -5,17 +5,17 @@ export class Mirror extends Entity {
   protected defaultTexturePath = "/mirror.png";
 
   start(): void {
-    this.sprite.x = 400;
-    this.sprite.y = 250;
+    this.visual.x = 400;
+    this.visual.y = 250;
   }
 
   update(_ticker: Ticker): void {}
 
   getRayIntersection(origin: Point, dir: Point): Point | null {
-    const half = this.sprite.width / 2;
+    const half = this.visual.width / 2;
 
-    const p1 = new Point(this.sprite.x - half, this.sprite.y);
-    const p2 = new Point(this.sprite.x + half, this.sprite.y);
+    const p1 = new Point(this.visual.x - half, this.visual.y);
+    const p2 = new Point(this.visual.x + half, this.visual.y);
 
     // Ray: R = origin + dir * t
     // Segment: S = p1 + (p2 - p1) * u
