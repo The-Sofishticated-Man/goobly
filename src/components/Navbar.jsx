@@ -4,7 +4,7 @@ import Image from 'next/image';
 
 export default function Navbar() {
   return (
-    <nav className="w-full flex items-center py-6 px-4">
+    <nav className="glass sticky top-0 z-50 w-full flex items-center py-6 px-4">
       {/* Logo */}
       <Image 
         src="/GooblyHeader.png" 
