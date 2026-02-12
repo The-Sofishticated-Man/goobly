@@ -4,10 +4,10 @@ import Image from 'next/image';
 
 export default function Navbar() {
   return (
-    <nav className="w-full flex items-center py-6 bg-[#121212] px-4">
+    <nav className="glass sticky top-0 z-50 w-full flex items-center py-6 px-4">
       {/* Logo */}
       <Image 
-        src="/sample(1).png" 
+        src="/GooblyHeader.png" 
         alt="Logo" 
         width={100} 
         height={200} 

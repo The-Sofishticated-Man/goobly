@@ -8,18 +8,6 @@ import Image from "next/image";
 import Math from "@/components/Math";
 import { Stage, Layer, Rect, Circle, Text } from "react-konva";
 
-const markdown = `
-## Reflection of Light
-
-When a ray of light strikes a mirror, the **angle of incidence** equals the **angle of reflection**.
-
-$$
-\\theta_i = \\theta_{re}
-$$
-
-Below is an interactive visualization.
-`;
-
 export default function ReflectionLesson() {
   return (
     <main className="mx-auto space-y-8 p-8">
