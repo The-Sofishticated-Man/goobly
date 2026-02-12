@@ -1,33 +1,14 @@
 "use client";
-import { BaseExperiment } from "@/core/BaseExperiment";
-import { ReflectionOfLightExperiment } from "@/modules/ReflectionOfLightExperiment";
-import { useEffect, useRef } from "react";
+import LaserPointer from "@/entities/LaserPointer";
+import { Layer, Rect, Stage } from "react-konva";
 
 export default function Playground({ module }: { module: string }) {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const experimentRef = useRef<BaseExperiment| null>(null);
-
-  useEffect(() => {
-    if (!canvasRef.current) return;
-    const experiment = new ReflectionOfLightExperiment(
-      canvasRef.current,
-      700,
-      500,
-      0xffffff
-    );
-    experimentRef.current = experiment;
-
-    experiment.init().catch((err) => {
-      // handle/log errors (don't crash the UI)
-      console.error("Experiment init failed:", err);
-    });
-
-    return () => {
-      experimentRef.current?.destroy();
-      experimentRef.current = null;
-    };
-    // intentionally empty deps — canvasRef doesn't change
-  }, []);
-
-  return <canvas ref={canvasRef} />;
+  return (
+    <Stage width={500} height={300} background={"#f0f0f0"}>
+      <Layer>
+        <Rect width={500} height={300} fill="white" />
+        <LaserPointer />
+      </Layer>
+    </Stage>
+  );
 }
