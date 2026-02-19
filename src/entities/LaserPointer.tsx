@@ -42,6 +42,20 @@ export default function LaserPointer() {
       draggable
       onDragMove={(e) => setPosition({ x: e.target.x(), y: e.target.y() })}
     >
+      {/* 1. The Laser Beam (Shooting Right) */}
+      <Line
+        points={[
+          beamStartX, beamStartY, 
+          beamStartX + beamLength, beamStartY
+        ]}
+        stroke="#ff0000"
+        strokeWidth={2}
+        shadowColor="#ff0000"
+        shadowBlur={10}
+        shadowOpacity={1}
+        opacity={0.8}
+        listening={false} // Crucial: ensures the beam doesn't block other clicks
+      />
 
       {/* 2. Laser Pointer Image */}
       <Image
