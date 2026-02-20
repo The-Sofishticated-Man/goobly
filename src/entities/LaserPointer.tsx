@@ -2,12 +2,12 @@ import React, { useState, useRef } from "react";
 import { useImage } from "react-konva-utils";
 import { Image, Group, Line, Circle } from "react-konva";
 import { useRotation } from "@/app/hooks/useRotation";
-// import { useRotation } from "./useRotation"; 
+// import { useRotation } from "./useRotation";
 
 export default function LaserPointer() {
   const [image] = useImage("/laserPointer.svg");
   const groupRef = useRef(null);
-  
+
   const [position, setPosition] = useState({ x: 200, y: 100 });
   const { rotation, startRotation } = useRotation(groupRef);
 
@@ -17,15 +17,15 @@ export default function LaserPointer() {
   const multiplier = 2;
   const laserWidth = image.width * multiplier;
   const laserHeight = image.height * multiplier;
-  
+
   // Center the image so (0,0) is the middle of the laser body
   const offsetX = laserWidth / 2;
   const offsetY = laserHeight / 2;
 
   // Configuration for "Pointing Right"
-  const beamStartX = offsetX;     // Right edge of the image
-  const beamStartY = 0;           // Vertically centered
-  const beamLength = 2000; 
+  const beamStartX = offsetX + 20; // Right edge of the image
+  const beamStartY = 0; // Vertically centered
+  const beamLength = 2000;
   const stickLength = 40;
 
   const setCursor = (e, cursorType) => {
@@ -42,20 +42,30 @@ export default function LaserPointer() {
       draggable
       onDragMove={(e) => setPosition({ x: e.target.x(), y: e.target.y() })}
     >
-      {/* 1. The Laser Beam (Shooting Right) */}
-      <Line
-        points={[
-          beamStartX, beamStartY, 
-          beamStartX + beamLength, beamStartY
-        ]}
-        stroke="#ff0000"
-        strokeWidth={2}
-        shadowColor="#ff0000"
-        shadowBlur={10}
-        shadowOpacity={1}
-        opacity={0.8}
-        listening={false} // Crucial: ensures the beam doesn't block other clicks
-      />
+      {/* --- THE LASER BEAM --- */}
+      <Group listening={false}>
+        {/* 1. The Outer Glow / Stroke (45% opaque) */}
+        <Line
+          points={[beamStartX, beamStartY, beamStartX + beamLength, beamStartY]}
+          stroke="#F5CE5C"
+          strokeWidth={20} // Thicker than the core
+          opacity={0.45} // 45% opacity as requested
+          lineCap="round" // Makes the start and end of the line rounded
+        />
+
+        {/* 2. The Inner Core (The sharp center) */}
+        <Line
+          points={[beamStartX, beamStartY, beamStartX + beamLength, beamStartY]}
+          stroke="#F5CE5C"
+          strokeWidth={10} // Thinner core
+          opacity={1} // Fully opaque
+          lineCap="round"
+          // Optional: add a slight shadow for the extra "neon" feel
+          shadowColor="#F5CE5C"
+          shadowBlur={8}
+          shadowOpacity={0.6}
+        />
+      </Group>
 
       {/* 2. Laser Pointer Image */}
       <Image
