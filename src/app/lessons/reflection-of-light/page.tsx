@@ -1,25 +1,21 @@
 "use client";
 
-import ReactMarkdown from "react-markdown";
-import remarkMath from "remark-math";
-import rehypeKatex from "rehype-katex";
 import Playground from "@/components/Playground";
-import Image from "next/image";
 import Math from "@/components/Math";
-import { Stage, Layer, Rect, Circle, Text } from "react-konva";
+// Removed unused imports to keep it clean, add them back if you plan to use them!
 
 export default function ReflectionLesson() {
   return (
-    <main className="mx-auto space-y-8 p-8">
-      <div className="lesson-container max-w-3xl mx-auto">
-        <h1>LIGHT REFLECTION</h1>
-        <h2>reflection on a Plan miror</h2>
+    <main className="mx-auto space-y-12 p-8 max-w-5xl">
+      <div className="lesson-container mx-auto">
+        <h1 className="text-3xl font-bold uppercase mb-2">Light Reflection</h1>
+        <h2 className="text-xl capitalize mb-4">Reflection on a Plane Mirror</h2>
         <p>
           Light reflection is a basic yet fascinating concept in Geometrical
           Optics. It shows how light bounces off surfaces like mirrors or
           metals, following simple laws we can see in everyday life. Despite its
           simplicity, reflection helps us understand how light interacts with
-          its surroundings and how images are formed from a calm lake to a laser
+          its surroundings and how images are formed. From a calm lake to a laser
           hitting a mirror, it's all governed by the same rules.
           <br />
           <br />
@@ -29,53 +25,64 @@ export default function ReflectionLesson() {
           about predicting and controlling light, showing how elegantly simple
           physics can be.
         </p>
-        <h3 className="text-yellow-400">Let's explore details</h3>
+      </div>
+
+      <div className="lesson-container mx-auto">
+        <h3 className="text-yellow-400 text-xl font-semibold mb-2">Let's explore the details</h3>
         <p>
           When light strikes a reflective surface, its behavior is described by
           the Two Laws of Reflection, also known as the first and second laws of
-          Snell- Descartes.
+          Snell-Descartes.
         </p>
       </div>
-      <div className={"flex items-center justify-between "}>
-        <div>
-          <h3 className="text-yellow-400">First law of Reflection</h3>
+
+      {/* Added responsive Flexbox: columns on mobile, rows on medium screens+ */}
+      <div className="flex flex-col md:flex-row items-center justify-between gap-8 mx-auto">
+
+        {/* Text takes up half the width on desktop */}
+        <div className="w-full md:w-1/2 space-y-4">
+          <h3 className="text-yellow-400 text-xl font-semibold">First Law of Reflection</h3>
           <p>
-            The incident ray, the refracted ray, and the normal to the surface
+            The incident ray, the <strong>reflected</strong> ray, and the normal to the surface
             at the point of incidence all lie in the same plane, named the
-            Incidence plane,
-            <br />
-            presented such as:
-            <br />
-            <br />
+            Plane of Incidence, presented such as:
           </p>
-          <div className="text-2xl mx-40 ">
+
+          <div className="text-2xl flex justify-center py-4">
             <Math
               math={String.raw`\textcolor{#ff6b6b}{\vec{n}} \cdot (\textcolor{#feca57}{\vec{i}} \times \textcolor{#feca57}{\vec{r}}) = 0`}
             />
           </div>
+
           <ul className="list-disc list-inside space-y-2">
             <li>
-              <Math math={String.raw`\textcolor{#ff6b6b}{\vec{n}}`} /> Normal
-              vector
+              <Math math={String.raw`\textcolor{#ff6b6b}{\vec{n}}`} /> Normal vector
             </li>
             <li>
-              <Math math={String.raw`\textcolor{#feca57}{\vec{i}}`} /> Incident
-              ray
+              <Math math={String.raw`\textcolor{#feca57}{\vec{i}}`} /> Incident ray
             </li>
             <li>
-              <Math math={String.raw`\textcolor{#feca57}{\vec{r}}`} /> Reflected
-              ray
+              <Math math={String.raw`\textcolor{#feca57}{\vec{r}}`} /> Reflected ray
             </li>
           </ul>
         </div>
-        <Image
-          src="/sample.png" // Path starts from the public folder
-          alt="Sample Image" // Always include alt text for accessibility
-          width={500} // Desired width in pixels
-          height={300} // Desired height in pixels
-          priority // Optional: loads the image faster if it's "above the fold"
-        />
+
+        {/* Video takes up the other half */}
+        <div className="w-full md:w-1/2 overflow-hidden rounded-lg bg-black -mt-12 md:mt-0">
+          <video
+            src="/Farmadark mode.mp4"
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="w-full h-auto object-cover"
+          >
+            Your browser does not support the video tag.
+          </video>
+        </div>
+
       </div>
+
       <Playground module="ahhh" />
     </main>
   );
