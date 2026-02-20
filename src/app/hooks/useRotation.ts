@@ -1,9 +1,11 @@
-import { useState, useEffect, useRef } from "react";
+import Konva from "konva";
+import { KonvaEventObject } from "konva/lib/Node";
+import { useState, useEffect, useRef, RefObject } from "react";
 
-export function useRotation(groupRef) {
+export function useRotation(groupRef: RefObject<Konva.Group>) {
   const [rotation, setRotation] = useState(0);
   const [isRotating, setIsRotating] = useState(false);
-  const previousAngleRef = useRef(null);
+  const previousAngleRef = useRef<number | null>(null);
   const ROTATION_SPEED = 0.4; // Adjust this for faster/slower rotation
 
   useEffect(() => {
@@ -60,7 +62,7 @@ export function useRotation(groupRef) {
     };
   }, [isRotating, groupRef]);
 
-  const startRotation = (e) => {
+  const startRotation = (e: KonvaEventObject<MouseEvent | TouchEvent>) => {
     e.cancelBubble = true;
     setIsRotating(true);
   };
