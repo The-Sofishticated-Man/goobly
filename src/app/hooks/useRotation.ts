@@ -1,8 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 export function useRotation(groupRef) {
   const [rotation, setRotation] = useState(0);
   const [isRotating, setIsRotating] = useState(false);
+  const previousAngleRef = useRef(null);
+  const ROTATION_SPEED = 0.4; // Adjust this for faster/slower rotation
 
   useEffect(() => {
     if (!isRotating) return;
@@ -13,17 +15,37 @@ export function useRotation(groupRef) {
 
       const pointerPos = stage.getPointerPosition();
       const absPos = groupRef.current.getAbsolutePosition();
-      
+
       if (!pointerPos || !absPos) return;
 
       const dx = pointerPos.x - absPos.x;
       const dy = pointerPos.y - absPos.y;
       const angle = Math.atan2(dy, dx) * (180 / Math.PI);
 
-      setRotation(angle+180);
+      // Handle angle wrapping to avoid sudden flips
+      if (previousAngleRef.current !== null) {
+        let delta = angle - previousAngleRef.current;
+
+        // If the delta is large, we probably crossed the -180/180 boundary
+        if (delta > 180) {
+          delta -= 360;
+        } else if (delta < -180) {
+          delta += 360;
+        }
+
+        setRotation((prev) => prev + delta * ROTATION_SPEED);
+      } else {
+        // First time, just set the initial rotation
+        setRotation(angle + 180);
+      }
+
+      previousAngleRef.current = angle;
     };
 
-    const handlePointerUp = () => setIsRotating(false);
+    const handlePointerUp = () => {
+      setIsRotating(false);
+      previousAngleRef.current = null;
+    };
 
     window.addEventListener("mousemove", handlePointerMove);
     window.addEventListener("mouseup", handlePointerUp);
