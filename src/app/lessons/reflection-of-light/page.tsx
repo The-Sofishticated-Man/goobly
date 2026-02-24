@@ -82,7 +82,30 @@ export default function ReflectionLesson() {
         </div>
 
       </div>
-      <Playground module="ahhh" />
+
+      <div className="flex justify-between gap-8">
+        <div className="flex flex-col space-y-4">
+          <h2 className="text-2xl font-bold">Light Reflection</h2>
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor: </p>
+
+          <div className="text-2xl justify-center flex py-4">
+            <Math math={String.raw`\textcolor{#6bcf7f}{\theta_i} = \textcolor{#b78bf8}{\theta_{re}}`} />
+          </div>
+
+          <ul className="list-disc list-inside space-y-2">
+            <li>
+              <Math math={String.raw`\textcolor{#6bcf7f}{\theta_i}`} />: Incident Angle
+            </li>
+            <li>
+              <Math math={String.raw`\textcolor{#b78bf8}{\theta_{re}}`} />: Reflected Angle
+            </li>
+          </ul>
+          <p>
+            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exerc itation ullamco laboris nisi ut aliquip ex ea commodo consequat.ad minim veniam, quis nostrud exerc itation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+          </p>
+        </div>
+        <Playground width={500} height={400} module="ahhh" />
+      </div>
     </main>
   );
 }
