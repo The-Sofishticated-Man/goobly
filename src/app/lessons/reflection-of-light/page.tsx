@@ -82,7 +82,6 @@ export default function ReflectionLesson() {
         </div>
 
       </div>
-
       <Playground module="ahhh" />
     </main>
   );
