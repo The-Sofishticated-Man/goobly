@@ -135,7 +135,7 @@ export default function LaserPointer({
       {/* Lollipop Stick */}
       <Line
         points={[-offsetX, 0, -offsetX - stickLength, 0]}
-        stroke="#0096ff"
+        stroke="#7491FF"
         strokeWidth={2}
       />
 
@@ -144,8 +144,8 @@ export default function LaserPointer({
         x={-offsetX - stickLength}
         y={0}
         radius={8}
-        fill="#ffffff"
-        stroke="#0096ff"
+        fill="#DAE2FF"
+        stroke="#7491FF"
         strokeWidth={3}
         onMouseEnter={(e) => setCursor(e, "grab")}
         onMouseLeave={(e) => setCursor(e, "default")}
