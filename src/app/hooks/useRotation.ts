@@ -1,6 +1,7 @@
 import Konva from "konva";
 import { KonvaEventObject } from "konva/lib/Node";
 import { useState, useEffect, useRef, useCallback, RefObject } from "react";
+import { ROTATION_LERP_SPEED } from "@/app/configs/laserPointerConfig";
 
 export function useRotation(
   groupRef: RefObject<Konva.Group | null>,
@@ -14,8 +15,6 @@ export function useRotation(
   const currentRef = useRef(externalRotation ?? 0);
   const rafRef = useRef<number | null>(null);
   const onRotationChangeRef = useRef(onRotationChange);
-
-  const LERP_SPEED = 0.18; // Controls smoothness (lower = smoother, higher = snappier)
 
   const currentRotation = externalRotation ?? rotation;
 
@@ -33,7 +32,7 @@ export function useRotation(
           rafRef.current = null;
           return;
         }
-        const next = currentRef.current + diff * LERP_SPEED;
+        const next = currentRef.current + diff * ROTATION_LERP_SPEED;
         currentRef.current = next;
         if (onRotationChangeRef.current) {
           onRotationChangeRef.current(next);
@@ -54,7 +53,7 @@ export function useRotation(
     const animate = () => {
       const diff = targetRotationRef.current - currentRef.current;
       if (Math.abs(diff) > 0.01) {
-        const next = currentRef.current + diff * LERP_SPEED;
+        const next = currentRef.current + diff * ROTATION_LERP_SPEED;
         currentRef.current = next;
         if (onRotationChangeRef.current) {
           onRotationChangeRef.current(next);

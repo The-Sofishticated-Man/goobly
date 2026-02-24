@@ -1,14 +1,15 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import Konva from "konva";
 import { KonvaEventObject } from "konva/lib/Node";
+import {
+  MOVEMENT_LERP_SPEED,
+  MOVEMENT_EPSILON,
+} from "@/app/configs/laserPointerConfig";
 
 interface Point {
   x: number;
   y: number;
 }
-
-const LERP_SPEED = 0.25;
-const EPSILON = 0.1;
 
 export function useSmoothPosition(
   initial: Point,
@@ -26,10 +27,10 @@ export function useSmoothPosition(
     const dx = targetRef.current.x - currentRef.current.x;
     const dy = targetRef.current.y - currentRef.current.y;
 
-    if (Math.abs(dx) > EPSILON || Math.abs(dy) > EPSILON) {
+    if (Math.abs(dx) > MOVEMENT_EPSILON || Math.abs(dy) > MOVEMENT_EPSILON) {
       currentRef.current = {
-        x: currentRef.current.x + dx * LERP_SPEED,
-        y: currentRef.current.y + dy * LERP_SPEED,
+        x: currentRef.current.x + dx * MOVEMENT_LERP_SPEED,
+        y: currentRef.current.y + dy * MOVEMENT_LERP_SPEED,
       };
       onChangeRef.current(currentRef.current);
     } else if (
@@ -42,8 +43,8 @@ export function useSmoothPosition(
 
     if (
       isDraggingRef.current ||
-      Math.abs(dx) > EPSILON ||
-      Math.abs(dy) > EPSILON
+      Math.abs(dx) > MOVEMENT_EPSILON ||
+      Math.abs(dy) > MOVEMENT_EPSILON
     ) {
       rafRef.current = requestAnimationFrame(animate);
     } else {
