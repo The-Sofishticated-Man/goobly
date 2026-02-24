@@ -14,9 +14,10 @@ import {
   BEAM_SHADOW_BLUR,
   BEAM_SHADOW_OPACITY,
 } from "@/app/configs/beamConfig";
-
-export const LASER_MULTIPLIER = 2;
-export const LASER_BEAM_OFFSET = 20;
+import {
+  LASER_BEAM_OFFSET,
+  LASER_MULTIPLIER,
+} from "@/app/configs/laserPointerConfig";
 
 interface LaserPointerProps {
   position: { x: number; y: number };

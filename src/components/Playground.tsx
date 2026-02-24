@@ -1,10 +1,15 @@
 "use client";
-import LaserPointer, {
+import LaserPointer from "@/entities/LaserPointer";
+import {
   LASER_MULTIPLIER,
   LASER_BEAM_OFFSET,
-} from "@/entities/LaserPointer";
-import Mirror, { MIRROR_LENGTH, MIRROR_POSITION } from "@/entities/Mirror";
-import { MIRROR_THICKNESS } from "@/app/configs/mirrorConfig";
+} from "@/app/configs/laserPointerConfig";
+import Mirror from "@/entities/Mirror";
+import {
+  MIRROR_THICKNESS,
+  MIRROR_POSITION,
+  MIRROR_LENGTH,
+} from "@/app/configs/mirrorConfig";
 import { Ray } from "@/lib/types";
 import { raySegmentReflection } from "@/lib/physics";
 import { Layer, Rect, Stage } from "react-konva";
