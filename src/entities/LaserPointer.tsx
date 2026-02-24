@@ -16,7 +16,7 @@ import {
 } from "@/app/configs/beamConfig";
 import {
   LASER_BEAM_OFFSET,
-  LASER_MULTIPLIER,
+  LASER_SIZE_MULTIPLIER,
 } from "@/app/configs/laserPointerConfig";
 
 interface LaserPointerProps {
@@ -46,7 +46,7 @@ export default function LaserPointer({
   if (!image) return null;
 
   // Dimensions & Offsets
-  const multiplier = LASER_MULTIPLIER;
+  const multiplier = LASER_SIZE_MULTIPLIER;
   const laserWidth = image.width * multiplier;
   const laserHeight = image.height * multiplier;
   const offsetX = laserWidth / 2;

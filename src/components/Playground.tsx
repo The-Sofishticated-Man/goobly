@@ -1,7 +1,7 @@
 "use client";
 import LaserPointer from "@/entities/LaserPointer";
 import {
-  LASER_MULTIPLIER,
+  LASER_SIZE_MULTIPLIER,
   LASER_BEAM_OFFSET,
 } from "@/app/configs/laserPointerConfig";
 import Mirror from "@/entities/Mirror";
@@ -36,7 +36,8 @@ export default function Playground({ module }: { module: string }) {
   // Compute beam synchronously — no useEffect delay
   const beam = useMemo<Ray | null>(() => {
     if (!image) return null;
-    const beamStartX = (image.width * LASER_MULTIPLIER) / 2 + LASER_BEAM_OFFSET;
+    const beamStartX =
+      (image.width * LASER_SIZE_MULTIPLIER) / 2 + LASER_BEAM_OFFSET;
     const rad = (laserRotation * Math.PI) / 180;
     return {
       origin: {
