@@ -13,7 +13,7 @@ import {
   BEAM_GLOW_OPACITY,
   BEAM_SHADOW_BLUR,
   BEAM_SHADOW_OPACITY,
-} from "@/lib/beamConfig";
+} from "@/app/configs/beamConfig";
 
 export const LASER_MULTIPLIER = 2;
 export const LASER_BEAM_OFFSET = 20;

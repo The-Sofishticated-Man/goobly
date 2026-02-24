@@ -10,7 +10,7 @@ import {
   BEAM_GLOW_OPACITY,
   BEAM_SHADOW_BLUR,
   BEAM_SHADOW_OPACITY,
-} from "@/lib/beamConfig";
+} from "@/app/configs/beamConfig";
 import {
   MIRROR_LENGTH,
   MIRROR_THICKNESS,
@@ -46,7 +46,7 @@ import {
   DEBUG_RAY_STROKE_WIDTH,
   DEBUG_RAY_OPACITY,
   DEBUG_RAY_DASH,
-} from "@/lib/mirrorConfig";
+} from "@/app/configs/mirrorConfig";
 
 export { MIRROR_LENGTH, MIRROR_POSITION };
 
