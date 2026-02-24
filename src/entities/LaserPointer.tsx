@@ -1,10 +1,10 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef } from "react";
 import { useImage } from "react-konva-utils";
 import { Image, Group, Line, Circle } from "react-konva";
 import Konva from "konva";
 import { KonvaEventObject } from "konva/lib/Node";
 import { useRotation } from "@/app/hooks/useRotation";
-import { Ray } from "@/lib/types";
+import { useSmoothPosition } from "@/app/hooks/useSmoothPosition";
 import {
   BEAM_LENGTH,
   BEAM_COLOR,
@@ -15,54 +15,45 @@ import {
   BEAM_SHADOW_OPACITY,
 } from "@/lib/beamConfig";
 
+export const LASER_MULTIPLIER = 2;
+export const LASER_BEAM_OFFSET = 20;
+
 interface LaserPointerProps {
   position: { x: number; y: number };
   rotation: number;
+  hitDistance?: number | null;
   onPositionChange: (pos: { x: number; y: number }) => void;
   onRotationChange: (rot: number) => void;
-  onBeamChange?: (beam: Ray | null) => void;
 }
 
 export default function LaserPointer({
   position,
   rotation,
+  hitDistance,
   onPositionChange,
   onRotationChange,
-  onBeamChange,
 }: LaserPointerProps) {
   const [image] = useImage("/laserPointer.svg");
   const groupRef = useRef<Konva.Group>(null);
 
   const { startRotation } = useRotation(groupRef, rotation, onRotationChange);
+  const { handleDragMove, handleDragStart, handleDragEnd } = useSmoothPosition(
+    position,
+    onPositionChange,
+  );
 
-  // Dimensions & Offsets (depend on loaded image)
-  const multiplier = 2;
-  const laserWidth = image ? image.width * multiplier : 0;
-  const laserHeight = image ? image.height * multiplier : 0;
+  if (!image) return null;
+
+  // Dimensions & Offsets
+  const multiplier = LASER_MULTIPLIER;
+  const laserWidth = image.width * multiplier;
+  const laserHeight = image.height * multiplier;
   const offsetX = laserWidth / 2;
   const offsetY = laserHeight / 2;
 
-  const beamStartX = offsetX + 20;
+  const beamStartX = offsetX + LASER_BEAM_OFFSET;
   const beamStartY = 0;
   const stickLength = 40;
-
-  // Compute and report beam ray whenever position/rotation/image changes
-  useEffect(() => {
-    if (!image || !onBeamChange) return;
-    const rad = (rotation * Math.PI) / 180;
-    onBeamChange({
-      origin: {
-        x: position.x + beamStartX * Math.cos(rad),
-        y: position.y + beamStartX * Math.sin(rad),
-      },
-      direction: {
-        x: Math.cos(rad),
-        y: Math.sin(rad),
-      },
-    });
-  }, [position.x, position.y, rotation, image, beamStartX, onBeamChange]);
-
-  if (!image) return null;
 
   const setCursor = (e: KonvaEventObject<MouseEvent>, cursorType: string) => {
     const stage = e.target.getStage();
@@ -76,15 +67,18 @@ export default function LaserPointer({
       y={position.y}
       rotation={rotation}
       draggable
-      onDragMove={(e) => onPositionChange({ x: e.target.x(), y: e.target.y() })}
+      onDragStart={handleDragStart}
+      onDragMove={handleDragMove}
+      onDragEnd={handleDragEnd}
     >
       {/* Laser Beam */}
       <Group listening={false}>
+        {/* Solid beam (up to mirror hit, or full length) */}
         <Line
           points={[
             beamStartX,
             beamStartY,
-            beamStartX + BEAM_LENGTH,
+            beamStartX + (hitDistance ?? BEAM_LENGTH),
             beamStartY,
           ]}
           stroke={BEAM_COLOR}
@@ -96,7 +90,7 @@ export default function LaserPointer({
           points={[
             beamStartX,
             beamStartY,
-            beamStartX + BEAM_LENGTH,
+            beamStartX + (hitDistance ?? BEAM_LENGTH),
             beamStartY,
           ]}
           stroke={BEAM_COLOR}
@@ -107,6 +101,23 @@ export default function LaserPointer({
           shadowBlur={BEAM_SHADOW_BLUR}
           shadowOpacity={BEAM_SHADOW_OPACITY}
         />
+
+        {/* Faded dashed beam past the mirror */}
+        {hitDistance != null && (
+          <Line
+            points={[
+              beamStartX + hitDistance,
+              beamStartY,
+              beamStartX + BEAM_LENGTH,
+              beamStartY,
+            ]}
+            stroke={BEAM_COLOR}
+            strokeWidth={BEAM_CORE_WIDTH / 2}
+            opacity={0.15}
+            lineCap="round"
+            dash={[12, 8]}
+          />
+        )}
       </Group>
 
       {/* Laser Pointer Image */}

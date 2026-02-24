@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Group, Line, Rect, Circle } from "react-konva";
 import { Ray } from "@/lib/types";
 import { raySegmentReflection } from "@/lib/physics";
@@ -16,13 +16,15 @@ const MIRROR_LENGTH = 400;
 const MIRROR_THICKNESS = 8;
 const MIRROR_POSITION = { x: 1550, y: 400 };
 
+export { MIRROR_LENGTH, MIRROR_POSITION };
+
 export default function Mirror({
   beam,
-  onIntersect,
+  hitDistance,
   debug = false,
 }: {
   beam: Ray | null;
-  onIntersect?: (distance: number | null) => void;
+  hitDistance?: number | null;
   debug?: boolean;
 }) {
   const { x: mx, y: my } = MIRROR_POSITION;
@@ -34,17 +36,6 @@ export default function Mirror({
   };
 
   const reflection = beam ? raySegmentReflection(beam, segment) : null;
-
-  useEffect(() => {
-    if (debug && beam) {
-      console.log("Beam:", beam);
-      console.log("Reflection:", reflection);
-    }
-  }, [debug, beam, reflection]);
-
-  useEffect(() => {
-    onIntersect?.(reflection?.distance ?? null);
-  }, [reflection?.distance, onIntersect]);
 
   return (
     <Group x={mx} y={my}>

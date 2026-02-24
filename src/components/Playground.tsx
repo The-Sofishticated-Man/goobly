@@ -1,17 +1,46 @@
 "use client";
-import LaserPointer from "@/entities/LaserPointer";
-import Mirror from "@/entities/Mirror";
+import LaserPointer, {
+  LASER_MULTIPLIER,
+  LASER_BEAM_OFFSET,
+} from "@/entities/LaserPointer";
+import Mirror, { MIRROR_LENGTH, MIRROR_POSITION } from "@/entities/Mirror";
 import { Ray } from "@/lib/types";
+import { raySegmentReflection } from "@/lib/physics";
 import { Layer, Rect, Stage } from "react-konva";
-import { useCallback, useState } from "react";
+import { useMemo, useState } from "react";
+import { useImage } from "react-konva-utils";
+
+const MIRROR_SEGMENT = {
+  start: { x: MIRROR_POSITION.x, y: MIRROR_POSITION.y - MIRROR_LENGTH / 2 },
+  end: { x: MIRROR_POSITION.x, y: MIRROR_POSITION.y + MIRROR_LENGTH / 2 },
+};
 
 export default function Playground({ module }: { module: string }) {
   const [laserPosition, setLaserPosition] = useState({ x: 200, y: 100 });
   const [laserRotation, setLaserRotation] = useState(10);
-  const [beam, setBeam] = useState<Ray | null>(null);
   const [debug, setDebug] = useState(false);
+  const [image] = useImage("/laserPointer.svg");
 
-  const handleBeamChange = useCallback((b: Ray | null) => setBeam(b), []);
+  // Compute beam synchronously — no useEffect delay
+  const beam = useMemo<Ray | null>(() => {
+    if (!image) return null;
+    const beamStartX = (image.width * LASER_MULTIPLIER) / 2 + LASER_BEAM_OFFSET;
+    const rad = (laserRotation * Math.PI) / 180;
+    return {
+      origin: {
+        x: laserPosition.x + beamStartX * Math.cos(rad),
+        y: laserPosition.y + beamStartX * Math.sin(rad),
+      },
+      direction: { x: Math.cos(rad), y: Math.sin(rad) },
+    };
+  }, [laserPosition.x, laserPosition.y, laserRotation, image]);
+
+  // Compute intersection synchronously — same render frame
+  const hitDistance = useMemo(() => {
+    if (!beam) return null;
+    const reflection = raySegmentReflection(beam, MIRROR_SEGMENT);
+    return reflection?.distance ?? null;
+  }, [beam]);
 
   return (
     <>
@@ -31,11 +60,11 @@ export default function Playground({ module }: { module: string }) {
           <LaserPointer
             position={laserPosition}
             rotation={laserRotation}
+            hitDistance={hitDistance}
             onPositionChange={setLaserPosition}
             onRotationChange={setLaserRotation}
-            onBeamChange={handleBeamChange}
           />
-          <Mirror beam={beam} debug={debug} />
+          <Mirror beam={beam} hitDistance={hitDistance} debug={debug} />
         </Layer>
       </Stage>
     </>
