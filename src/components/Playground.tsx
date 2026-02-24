@@ -4,6 +4,7 @@ import LaserPointer, {
   LASER_BEAM_OFFSET,
 } from "@/entities/LaserPointer";
 import Mirror, { MIRROR_LENGTH, MIRROR_POSITION } from "@/entities/Mirror";
+import { MIRROR_THICKNESS } from "@/lib/mirrorConfig";
 import { Ray } from "@/lib/types";
 import { raySegmentReflection } from "@/lib/physics";
 import { Layer, Rect, Stage } from "react-konva";
@@ -11,8 +12,14 @@ import { useMemo, useState } from "react";
 import { useImage } from "react-konva-utils";
 
 const MIRROR_SEGMENT = {
-  start: { x: MIRROR_POSITION.x, y: MIRROR_POSITION.y - MIRROR_LENGTH / 2 },
-  end: { x: MIRROR_POSITION.x, y: MIRROR_POSITION.y + MIRROR_LENGTH / 2 },
+  start: {
+    x: MIRROR_POSITION.x - MIRROR_THICKNESS / 2,
+    y: MIRROR_POSITION.y - MIRROR_LENGTH / 2,
+  },
+  end: {
+    x: MIRROR_POSITION.x - MIRROR_THICKNESS / 2,
+    y: MIRROR_POSITION.y + MIRROR_LENGTH / 2,
+  },
 };
 
 export default function Playground({ module }: { module: string }) {
@@ -57,6 +64,7 @@ export default function Playground({ module }: { module: string }) {
       <Stage width={1800} height={800} background={"#f0f0f0"}>
         <Layer>
           <Rect width={1800} height={800} stroke={"#f0f0f0"} />
+          <Mirror beam={beam} hitDistance={hitDistance} debug={debug} />
           <LaserPointer
             position={laserPosition}
             rotation={laserRotation}
@@ -64,7 +72,6 @@ export default function Playground({ module }: { module: string }) {
             onPositionChange={setLaserPosition}
             onRotationChange={setLaserRotation}
           />
-          <Mirror beam={beam} hitDistance={hitDistance} debug={debug} />
         </Layer>
       </Stage>
     </>

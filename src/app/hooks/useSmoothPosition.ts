@@ -18,6 +18,7 @@ export function useSmoothPosition(
   const currentRef = useRef(initial);
   const rafRef = useRef<number | null>(null);
   const isDraggingRef = useRef(false);
+  const grabOffsetRef = useRef<Point>({ x: 0, y: 0 });
   const onChangeRef = useRef(onPositionChange);
   onChangeRef.current = onPositionChange;
 
@@ -56,22 +57,40 @@ export function useSmoothPosition(
     node.x(currentRef.current.x);
     node.y(currentRef.current.y);
 
-    // Update target from the mouse pointer
+    // Update target from the mouse pointer, accounting for grab offset
     const stage = node.getStage();
     if (stage) {
       const pointer = stage.getPointerPosition();
       if (pointer) {
-        targetRef.current = { x: pointer.x, y: pointer.y };
+        targetRef.current = {
+          x: pointer.x - grabOffsetRef.current.x,
+          y: pointer.y - grabOffsetRef.current.y,
+        };
       }
     }
   }, []);
 
-  const handleDragStart = useCallback(() => {
-    isDraggingRef.current = true;
-    if (!rafRef.current) {
-      rafRef.current = requestAnimationFrame(animate);
-    }
-  }, [animate]);
+  const handleDragStart = useCallback(
+    (e: KonvaEventObject<DragEvent>) => {
+      // Record the offset between pointer and node position
+      const node = e.target as Konva.Node;
+      const stage = node.getStage();
+      if (stage) {
+        const pointer = stage.getPointerPosition();
+        if (pointer) {
+          grabOffsetRef.current = {
+            x: pointer.x - currentRef.current.x,
+            y: pointer.y - currentRef.current.y,
+          };
+        }
+      }
+      isDraggingRef.current = true;
+      if (!rafRef.current) {
+        rafRef.current = requestAnimationFrame(animate);
+      }
+    },
+    [animate],
+  );
 
   const handleDragEnd = useCallback(() => {
     isDraggingRef.current = false;

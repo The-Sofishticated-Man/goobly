@@ -28,7 +28,8 @@ import {
   NORMAL_DASH,
   NORMAL_OPACITY,
   NORMAL_LABEL_FONT_SIZE,
-  ARC_RADIUS,
+  ARC_INCIDENT_RADIUS,
+  ARC_REFLECTED_RADIUS,
   ARC_STROKE_WIDTH,
   ARC_OPACITY,
   ARC_INCIDENT_COLOR,
@@ -60,10 +61,11 @@ export default function Mirror({
 }) {
   const { x: mx, y: my } = MIRROR_POSITION;
 
-  // Mirror surface segment in world space
+  // Mirror surface segment in world space (front face)
+  const surfaceX = mx - MIRROR_THICKNESS / 2;
   const segment = {
-    start: { x: mx, y: my - MIRROR_LENGTH / 2 },
-    end: { x: mx, y: my + MIRROR_LENGTH / 2 },
+    start: { x: surfaceX, y: my - MIRROR_LENGTH / 2 },
+    end: { x: surfaceX, y: my + MIRROR_LENGTH / 2 },
   };
 
   const reflection = beam ? raySegmentReflection(beam, segment) : null;
@@ -180,12 +182,13 @@ function AngleAnnotation({
   // Compute arc start/sweep for reflected arc (from normal to reflected beam direction)
   const reflectedArc = computeArc(normalAngleDeg, reflectedAngleDeg);
 
-  // Label positions
+  // Label positions (midpoint of each arc's actual sweep)
   const incidentLabelAngle =
-    ((normalAngleDeg + incomingAngleDeg) / 2) * (Math.PI / 180);
+    (incidentArc.start + incidentArc.sweep / 2) * (Math.PI / 180);
   const reflectedLabelAngle =
-    ((normalAngleDeg + reflectedAngleDeg) / 2) * (Math.PI / 180);
-  const labelRadius = ARC_RADIUS + ANGLE_LABEL_OFFSET;
+    (reflectedArc.start + reflectedArc.sweep / 2) * (Math.PI / 180);
+  const incidentLabelRadius = ARC_INCIDENT_RADIUS + ANGLE_LABEL_OFFSET;
+  const reflectedLabelRadius = ARC_REFLECTED_RADIUS + ANGLE_LABEL_OFFSET;
 
   return (
     <Group listening={false}>
@@ -217,20 +220,19 @@ function AngleAnnotation({
       <Arc
         x={localX}
         y={localY}
-        innerRadius={ARC_RADIUS - 1}
-        outerRadius={ARC_RADIUS + 1}
+        innerRadius={ARC_INCIDENT_RADIUS - 1}
+        outerRadius={ARC_INCIDENT_RADIUS + 1}
         angle={Math.abs(incidentArc.sweep)}
         rotation={incidentArc.start}
-        fill="transparent"
-        stroke={ARC_INCIDENT_COLOR}
+        fill={ARC_INCIDENT_COLOR}
         strokeWidth={ARC_STROKE_WIDTH}
         opacity={ARC_OPACITY}
       />
 
       {/* Incident angle label */}
       <Text
-        x={localX + Math.cos(incidentLabelAngle) * labelRadius - 10}
-        y={localY + Math.sin(incidentLabelAngle) * labelRadius - 8}
+        x={localX + Math.cos(incidentLabelAngle) * incidentLabelRadius - 10}
+        y={localY + Math.sin(incidentLabelAngle) * incidentLabelRadius - 8}
         text={`${incidentAngleDeg}°`}
         fontSize={ANGLE_LABEL_FONT_SIZE}
         fontStyle="bold"
@@ -241,20 +243,19 @@ function AngleAnnotation({
       <Arc
         x={localX}
         y={localY}
-        innerRadius={ARC_RADIUS - 1}
-        outerRadius={ARC_RADIUS + 1}
+        innerRadius={ARC_REFLECTED_RADIUS - 1}
+        outerRadius={ARC_REFLECTED_RADIUS + 1}
         angle={Math.abs(reflectedArc.sweep)}
         rotation={reflectedArc.start}
-        fill="transparent"
-        stroke={ARC_REFLECTED_COLOR}
+        fill={ARC_REFLECTED_COLOR}
         strokeWidth={ARC_STROKE_WIDTH}
         opacity={ARC_OPACITY}
       />
 
       {/* Reflected angle label */}
       <Text
-        x={localX + Math.cos(reflectedLabelAngle) * labelRadius - 10}
-        y={localY + Math.sin(reflectedLabelAngle) * labelRadius - 8}
+        x={localX + Math.cos(reflectedLabelAngle) * reflectedLabelRadius - 10}
+        y={localY + Math.sin(reflectedLabelAngle) * reflectedLabelRadius - 8}
         text={`${incidentAngleDeg}°`}
         fontSize={ANGLE_LABEL_FONT_SIZE}
         fontStyle="bold"
