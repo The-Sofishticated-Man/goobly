@@ -27,7 +27,15 @@ const MIRROR_SEGMENT = {
   },
 };
 
-export default function Playground({ module }: { module: string }) {
+export default function Playground({
+  module,
+  width,
+  height,
+}: {
+  module: string;
+  width: number;
+  height: number;
+}) {
   const [laserPosition, setLaserPosition] = useState({ x: 200, y: 100 });
   const [laserRotation, setLaserRotation] = useState(10);
   const [debug, setDebug] = useState(false);
@@ -67,9 +75,9 @@ export default function Playground({ module }: { module: string }) {
           Debug Mode
         </label>
       </div>
-      <Stage width={1800} height={800} background={"#f0f0f0"}>
+      <Stage width={width} height={height} background={"#f0f0f0"}>
         <Layer>
-          <Rect width={1800} height={800} stroke={"#f0f0f0"} />
+          <Rect width={width} height={height} stroke={"#f0f0f0"} />
           <Mirror beam={beam} hitDistance={hitDistance} debug={debug} />
           <LaserPointer
             position={laserPosition}

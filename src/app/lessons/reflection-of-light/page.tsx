@@ -76,7 +76,7 @@ export default function ReflectionLesson() {
           priority // Optional: loads the image faster if it's "above the fold"
         />
       </div>
-      <Playground module="ahhh" />
+      <Playground module="ahhh" width={1800} height={500} />
     </main>
   );
 }
