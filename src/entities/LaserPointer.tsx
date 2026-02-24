@@ -1,34 +1,70 @@
-import React, { useState, useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import { useImage } from "react-konva-utils";
 import { Image, Group, Line, Circle } from "react-konva";
+import Konva from "konva";
+import { KonvaEventObject } from "konva/lib/Node";
 import { useRotation } from "@/app/hooks/useRotation";
-// import { useRotation } from "./useRotation";
+import { Ray } from "@/lib/types";
+import {
+  BEAM_LENGTH,
+  BEAM_COLOR,
+  BEAM_CORE_WIDTH,
+  BEAM_GLOW_WIDTH,
+  BEAM_GLOW_OPACITY,
+  BEAM_SHADOW_BLUR,
+  BEAM_SHADOW_OPACITY,
+} from "@/lib/beamConfig";
 
-export default function LaserPointer() {
+interface LaserPointerProps {
+  position: { x: number; y: number };
+  rotation: number;
+  onPositionChange: (pos: { x: number; y: number }) => void;
+  onRotationChange: (rot: number) => void;
+  onBeamChange?: (beam: Ray | null) => void;
+}
+
+export default function LaserPointer({
+  position,
+  rotation,
+  onPositionChange,
+  onRotationChange,
+  onBeamChange,
+}: LaserPointerProps) {
   const [image] = useImage("/laserPointer.svg");
-  const groupRef = useRef(null);
+  const groupRef = useRef<Konva.Group>(null);
 
-  const [position, setPosition] = useState({ x: 200, y: 100 });
-  const { rotation, startRotation } = useRotation(groupRef);
+  const { startRotation } = useRotation(groupRef, rotation, onRotationChange);
 
-  if (!image) return null;
-
-  // Dimensions & Offsets
+  // Dimensions & Offsets (depend on loaded image)
   const multiplier = 2;
-  const laserWidth = image.width * multiplier;
-  const laserHeight = image.height * multiplier;
-
-  // Center the image so (0,0) is the middle of the laser body
+  const laserWidth = image ? image.width * multiplier : 0;
+  const laserHeight = image ? image.height * multiplier : 0;
   const offsetX = laserWidth / 2;
   const offsetY = laserHeight / 2;
 
-  // Configuration for "Pointing Right"
-  const beamStartX = offsetX + 20; // Right edge of the image
-  const beamStartY = 0; // Vertically centered
-  const beamLength = 2000;
+  const beamStartX = offsetX + 20;
+  const beamStartY = 0;
   const stickLength = 40;
 
-  const setCursor = (e, cursorType) => {
+  // Compute and report beam ray whenever position/rotation/image changes
+  useEffect(() => {
+    if (!image || !onBeamChange) return;
+    const rad = (rotation * Math.PI) / 180;
+    onBeamChange({
+      origin: {
+        x: position.x + beamStartX * Math.cos(rad),
+        y: position.y + beamStartX * Math.sin(rad),
+      },
+      direction: {
+        x: Math.cos(rad),
+        y: Math.sin(rad),
+      },
+    });
+  }, [position.x, position.y, rotation, image, beamStartX, onBeamChange]);
+
+  if (!image) return null;
+
+  const setCursor = (e: KonvaEventObject<MouseEvent>, cursorType: string) => {
     const stage = e.target.getStage();
     if (stage) stage.container().style.cursor = cursorType;
   };
@@ -40,34 +76,40 @@ export default function LaserPointer() {
       y={position.y}
       rotation={rotation}
       draggable
-      onDragMove={(e) => setPosition({ x: e.target.x(), y: e.target.y() })}
+      onDragMove={(e) => onPositionChange({ x: e.target.x(), y: e.target.y() })}
     >
-      {/* --- THE LASER BEAM --- */}
+      {/* Laser Beam */}
       <Group listening={false}>
-        {/* 1. The Outer Glow / Stroke (45% opaque) */}
         <Line
-          points={[beamStartX, beamStartY, beamStartX + beamLength, beamStartY]}
-          stroke="#F5CE5C"
-          strokeWidth={20} // Thicker than the core
-          opacity={0.45} // 45% opacity as requested
-          lineCap="round" // Makes the start and end of the line rounded
-        />
-
-        {/* 2. The Inner Core (The sharp center) */}
-        <Line
-          points={[beamStartX, beamStartY, beamStartX + beamLength, beamStartY]}
-          stroke="#F5CE5C"
-          strokeWidth={10} // Thinner core
-          opacity={1} // Fully opaque
+          points={[
+            beamStartX,
+            beamStartY,
+            beamStartX + BEAM_LENGTH,
+            beamStartY,
+          ]}
+          stroke={BEAM_COLOR}
+          strokeWidth={BEAM_GLOW_WIDTH}
+          opacity={BEAM_GLOW_OPACITY}
           lineCap="round"
-          // Optional: add a slight shadow for the extra "neon" feel
-          shadowColor="#F5CE5C"
-          shadowBlur={8}
-          shadowOpacity={0.6}
+        />
+        <Line
+          points={[
+            beamStartX,
+            beamStartY,
+            beamStartX + BEAM_LENGTH,
+            beamStartY,
+          ]}
+          stroke={BEAM_COLOR}
+          strokeWidth={BEAM_CORE_WIDTH}
+          opacity={1}
+          lineCap="round"
+          shadowColor={BEAM_COLOR}
+          shadowBlur={BEAM_SHADOW_BLUR}
+          shadowOpacity={BEAM_SHADOW_OPACITY}
         />
       </Group>
 
-      {/* 2. Laser Pointer Image */}
+      {/* Laser Pointer Image */}
       <Image
         image={image}
         x={-offsetX}
@@ -78,14 +120,14 @@ export default function LaserPointer() {
         onMouseLeave={(e) => setCursor(e, "default")}
       />
 
-      {/* 3. Lollipop Stick (Attached to the BACK/LEFT of the pointer) */}
+      {/* Lollipop Stick */}
       <Line
         points={[-offsetX, 0, -offsetX - stickLength, 0]}
         stroke="#0096ff"
         strokeWidth={2}
       />
 
-      {/* 4. Lollipop Handle */}
+      {/* Lollipop Handle */}
       <Circle
         x={-offsetX - stickLength}
         y={0}

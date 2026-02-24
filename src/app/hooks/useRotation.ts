@@ -2,11 +2,18 @@ import Konva from "konva";
 import { KonvaEventObject } from "konva/lib/Node";
 import { useState, useEffect, useRef, RefObject } from "react";
 
-export function useRotation(groupRef: RefObject<Konva.Group>) {
-  const [rotation, setRotation] = useState(0);
+export function useRotation(
+  groupRef: RefObject<Konva.Group | null>,
+  externalRotation?: number,
+  onRotationChange?: (rotation: number) => void,
+) {
+  const [rotation, setRotation] = useState(externalRotation ?? 0);
   const [isRotating, setIsRotating] = useState(false);
   const previousAngleRef = useRef<number | null>(null);
   const ROTATION_SPEED = 0.4; // Adjust this for faster/slower rotation
+
+  // Use external rotation if provided, otherwise use internal state
+  const currentRotation = externalRotation ?? rotation;
 
   useEffect(() => {
     if (!isRotating) return;
@@ -35,10 +42,21 @@ export function useRotation(groupRef: RefObject<Konva.Group>) {
           delta += 360;
         }
 
-        setRotation((prev) => prev + delta * ROTATION_SPEED);
+        const newRotation = currentRotation + delta * ROTATION_SPEED;
+
+        if (onRotationChange) {
+          onRotationChange(newRotation);
+        } else {
+          setRotation(newRotation);
+        }
       } else {
         // First time, just set the initial rotation
-        setRotation(angle + 180);
+        const initialRotation = angle + 180;
+        if (onRotationChange) {
+          onRotationChange(initialRotation);
+        } else {
+          setRotation(initialRotation);
+        }
       }
 
       previousAngleRef.current = angle;
@@ -60,12 +78,12 @@ export function useRotation(groupRef: RefObject<Konva.Group>) {
       window.removeEventListener("touchmove", handlePointerMove);
       window.removeEventListener("touchend", handlePointerUp);
     };
-  }, [isRotating, groupRef]);
+  }, [isRotating, groupRef, currentRotation, onRotationChange]);
 
   const startRotation = (e: KonvaEventObject<MouseEvent | TouchEvent>) => {
     e.cancelBubble = true;
     setIsRotating(true);
   };
 
-  return { rotation, startRotation };
+  return { rotation: currentRotation, startRotation };
 }
