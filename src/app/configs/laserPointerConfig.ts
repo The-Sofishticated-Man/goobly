@@ -1,4 +1,4 @@
-export const LASER_SIZE_MULTIPLIER = 2;
+export const LASER_SIZE_MULTIPLIER = 1.3;
 export const LASER_BEAM_OFFSET = 20;
 
 // Rotation smoothing
