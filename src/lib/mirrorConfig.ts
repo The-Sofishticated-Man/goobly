@@ -12,18 +12,19 @@ export const MIRROR_EDGE_OPACITY = 0.6;
 
 // Normal line
 export const NORMAL_LENGTH = 150;
-export const NORMAL_COLOR = "#ff6b6b";
+export const NORMAL_COLOR = "#f3f3f3";
 export const NORMAL_STROKE_WIDTH = 1.5;
 export const NORMAL_DASH = [6, 4];
 export const NORMAL_OPACITY = 0.8;
 export const NORMAL_LABEL_FONT_SIZE = 14;
 
 // Angle arcs
-export const ARC_RADIUS = 60;
+export const ARC_INCIDENT_RADIUS = 60;
+export const ARC_REFLECTED_RADIUS = 80;
 export const ARC_STROKE_WIDTH = 1.5;
 export const ARC_OPACITY = 0.9;
-export const ARC_INCIDENT_COLOR = "#54a0ff";
-export const ARC_REFLECTED_COLOR = "#feca57";
+export const ARC_INCIDENT_COLOR = "#BE9AD2";
+export const ARC_REFLECTED_COLOR = "#A0E8A9";
 
 // Angle labels
 export const ANGLE_LABEL_FONT_SIZE = 13;
