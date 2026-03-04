@@ -7,8 +7,8 @@ import Divider from '@/components/Divider/Divider';
 
 export default function ReflectionLesson() {
   return (
-    <main className="mx-auto space-y-8 sm:space-y-12 p-4 sm:p-6 md:p-8 max-w-5xl">
-      <div className="lesson-container mx-auto">
+    <main className="mx-auto space-y-8 sm:space-y-12 p-4 sm:p-6 md:p-8 lg:p-10 w-full max-w-full lg:max-w-6xl xl:max-w-7xl 2xl:max-w-[90%]">
+      <div className="lesson-container mx-auto w-full">
         <h1 className="text-3xl font-bold uppercase mb-2">Light Reflection</h1>
         <h2 className="text-xl capitalize mb-4">Reflection on a Plane Mirror</h2>
         <p>
@@ -28,7 +28,7 @@ export default function ReflectionLesson() {
         </p>
       </div>
 
-      <div className="lesson-container mx-auto">
+      <div className="lesson-container mx-auto w-full">
         <h3 className="text-yellow-400 text-xl font-semibold mb-2">Let's explore the details</h3>
         <p>
           When light strikes a reflective surface, its behavior is described by
@@ -38,10 +38,10 @@ export default function ReflectionLesson() {
       </div>
 
       {/* Added responsive Flexbox: columns on mobile, rows on medium screens+ */}
-      <div className="flex flex-col lg:flex-row items-center justify-between gap-6 md:gap-8 mx-auto">
+      <div className="flex flex-col lg:flex-row items-center justify-between gap-6 md:gap-8 mx-auto w-full">
 
         {/* Text takes up half the width on desktop */}
-        <div className="w-full lg:w-1/2 space-y-4">
+        <div className="w-full lg:w-1/2 space-y-4 px-2 sm:px-4">
           <h3 className="text-yellow-400 text-xl font-semibold">First Law of Reflection</h3>
           <p>
             The incident ray, the <strong>reflected</strong> ray, and the normal to the surface
@@ -69,7 +69,7 @@ export default function ReflectionLesson() {
         </div>
 
         {/* Video takes up the other half */}
-        <div className="w-full lg:w-1/2 overflow-hidden rounded-lg bg-black">
+        <div className="w-full lg:w-1/2 overflow-hidden rounded-lg px-2 sm:px-4">
           <video
             src="/Farmadark mode.mp4"
             autoPlay
@@ -83,8 +83,8 @@ export default function ReflectionLesson() {
         </div>
       </div>
       <Divider />
-      <div className="flex flex-col lg:flex-row justify-between gap-6 md:gap-8">
-        <div className="w-full lg:w-1/2 flex flex-col space-y-4">
+      <div className="flex flex-col lg:flex-row justify-between gap-6 md:gap-8 mx-auto w-full">
+        <div className="w-full lg:w-1/2 flex flex-col space-y-4 px-2 sm:px-4">
           <h2 className="text-2xl md:text-3xl font-bold">Light Reflection</h2>
           <p>When a ray of light strikes a smooth surface, such as a mirror, it is reflected back into the same medium. This behavior follows a simple geometric rule known as the law of reflection, denoted as following: </p>
 
@@ -101,19 +101,20 @@ export default function ReflectionLesson() {
             </li>
           </ul>
           <p>
-            This law tells us that light reflects in a perfectly symmetric way with respect to the normal line “N” (the line perpendicular to the surface at the point of contact).
+            This law tells us that light reflects in a perfectly symmetric way with respect to the normal line “N” (the line perpendicular to the surface at the point of contact).<br />
 
-            In other words, the surface does not “favor” any direction. Light arrives, interacts with the surface, and leaves at the same angle it came in, but on the opposite side of the normal.
+            In other words, the surface does not “favor” any direction.<br />
+            Light arrives, interacts with the surface, and leaves at the same angle it came in, but on the opposite side of the normal.<br />
 
             This symmetry is why mirrors produce predictable images and why a laser beam reflects so cleanly from a flat surface          </p>
         </div>
-        <div className="w-full lg:w-1/2 min-h-96 sm:min-h-[500px] flex items-center justify-center">
-          <Playground width={500} height={400} module="ahhh" />
+        <div className="w-full lg:w-1/2 min-h-96 sm:min-h-[500px] flex items-center justify-center px-2 sm:px-4">
+          <Playground width={500} height={800} module="ahhh" />
         </div>
       </div>
       <Divider />
-      <div>
-        <p>Together, the two laws of reflection fully describe how light behaves when it encounters a smooth surface. With only these simple rules, we can accurately predict the direction of reflected rays and construct precise optical models.
+      <div className="w-full px-2 sm:px-4 mx-auto">
+        <p className="max-w-full text-center">Together, the two laws of reflection fully describe how light behaves when it encounters a smooth surface. With only these simple rules, we can accurately predict the direction of reflected rays and construct precise optical models.
           In this Goobly Article, these laws are applied in real time to trace light rays as they interact with reflective surfaces, allowing users to visualize how geometry alone governs reflection. This shows that even the most advanced optical systems are built upon remarkably simple physical principles.</p>
       </div>
     </main>
