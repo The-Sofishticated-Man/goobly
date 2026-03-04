@@ -7,7 +7,7 @@ import Divider from '@/components/Divider/Divider';
 
 export default function ReflectionLesson() {
   return (
-    <main className="mx-auto space-y-12 p-8 max-w-5xl">
+    <main className="mx-auto space-y-8 sm:space-y-12 p-4 sm:p-6 md:p-8 max-w-5xl">
       <div className="lesson-container mx-auto">
         <h1 className="text-3xl font-bold uppercase mb-2">Light Reflection</h1>
         <h2 className="text-xl capitalize mb-4">Reflection on a Plane Mirror</h2>
@@ -38,10 +38,10 @@ export default function ReflectionLesson() {
       </div>
 
       {/* Added responsive Flexbox: columns on mobile, rows on medium screens+ */}
-      <div className="flex flex-col md:flex-row items-center justify-between gap-8 mx-auto">
+      <div className="flex flex-col lg:flex-row items-center justify-between gap-6 md:gap-8 mx-auto">
 
         {/* Text takes up half the width on desktop */}
-        <div className="w-full md:w-1/2 space-y-4">
+        <div className="w-full lg:w-1/2 space-y-4">
           <h3 className="text-yellow-400 text-xl font-semibold">First Law of Reflection</h3>
           <p>
             The incident ray, the <strong>reflected</strong> ray, and the normal to the surface
@@ -69,7 +69,7 @@ export default function ReflectionLesson() {
         </div>
 
         {/* Video takes up the other half */}
-        <div className="w-full md:w-1/2 overflow-hidden rounded-lg bg-black -mt-12 md:mt-0">
+        <div className="w-full lg:w-1/2 overflow-hidden rounded-lg bg-black">
           <video
             src="/Farmadark mode.mp4"
             autoPlay
@@ -83,9 +83,9 @@ export default function ReflectionLesson() {
         </div>
       </div>
       <Divider />
-      <div className="flex justify-between gap-8">
-        <div className="flex flex-col space-y-4">
-          <h2 className="text-2xl font-bold">Light Reflection</h2>
+      <div className="flex flex-col lg:flex-row justify-between gap-6 md:gap-8">
+        <div className="w-full lg:w-1/2 flex flex-col space-y-4">
+          <h2 className="text-2xl md:text-3xl font-bold">Light Reflection</h2>
           <p>When a ray of light strikes a smooth surface, such as a mirror, it is reflected back into the same medium. This behavior follows a simple geometric rule known as the law of reflection, denoted as following: </p>
 
           <div className="text-2xl justify-center flex py-4">
@@ -107,7 +107,9 @@ export default function ReflectionLesson() {
 
             This symmetry is why mirrors produce predictable images and why a laser beam reflects so cleanly from a flat surface          </p>
         </div>
-        <Playground width={500} height={400} module="ahhh" />
+        <div className="w-full lg:w-1/2 min-h-96 sm:min-h-[500px] flex items-center justify-center">
+          <Playground width={500} height={400} module="ahhh" />
+        </div>
       </div>
       <Divider />
       <div>

@@ -22,19 +22,33 @@
   }
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Responsive touch targets for mobile */
+@media (max-width: 640px) {
+  button, input[type="checkbox"], input[type="radio"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
 }
 
 .lesson-container {
   text-align: center;
-  padding: 2rem;
+  padding: clamp(1rem, 3vw, 2rem);
 }
 
 .lesson-container h1 {
-  font-size: 3.5rem;
+  font-size: clamp(1.75rem, 5vw, 3.5rem);
   font-weight: bold;
   color: var(--accent);
   margin-bottom: 0.5rem;
@@ -42,7 +56,7 @@ body {
 }
 
 .lesson-container h2 {
-  font-size: 1.5rem;
+  font-size: clamp(1.1rem, 4vw, 1.5rem);
   color: #999;
   margin-bottom: 2rem;
   font-weight: normal;
@@ -50,13 +64,13 @@ body {
 }
 
 .lesson-container h3 {
-  font-size: 1.3rem;
+  font-size: clamp(1.1rem, 3vw, 1.3rem);
   color: var(--accent);
   margin: 2rem 0 1rem 0;
 }
 
 .lesson-container p {
-  font-size: 1rem;
+  font-size: clamp(0.875rem, 2vw, 1rem);
   line-height: 1.6;
   text-align: left;
   margin: 1.5rem 0;
@@ -64,15 +78,41 @@ body {
 }
 
 canvas {
-  margin-left: auto;
+  margin: 0 auto;
   display: block;
-  height: 300px;
-  width: 300px;
+  height: clamp(200px, 50vw, 400px);
+  width: clamp(200px, 50vw, 400px);
   position: relative;
 }
+
 .glass {
   background: rgba(26, 26, 26, 0.7);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
+}
+
+/* Responsive image containers */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Responsive video containers */
+video {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Better text readability on smaller screens */
+@media (max-width: 640px) {
+  body {
+    font-size: 16px; /* Prevent zoom on iOS input focus */
+  }
+}
+
+/* Prevent horizontal scroll */
+html, body {
+  overflow-x: hidden;
+  width: 100%;
 }

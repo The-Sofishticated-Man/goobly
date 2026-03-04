@@ -4,28 +4,28 @@ import Image from 'next/image';
 
 export default function Navbar() {
   return (
-    <nav className="glass sticky top-0 z-50 w-full flex items-center py-6 px-4">
+    <nav className="glass sticky top-0 z-50 w-full flex flex-col sm:flex-row items-center py-3 sm:py-6 px-3 sm:px-4 gap-3 sm:gap-4">
       {/* Logo */}
-      <Image 
-        src="/GooblyHeader.png" 
-        alt="Logo" 
-        width={100} 
-        height={200} 
-        className="h-12 w-auto"
+      <Image
+        src="/GooblyHeader.png"
+        alt="Logo"
+        width={100}
+        height={200}
+        className="h-8 sm:h-12 w-auto flex-shrink-0"
       />
-      <div className="relative w-full max-w-2xl px-4 flex justify-center mx-auto">
+      <div className="relative w-full flex justify-center">
         {/* The Search Bar Container */}
-        <div className="flex items-center justify-between w-full h-12 px-6 
+        <div className="flex items-center justify-between w-full max-w-2xl h-10 sm:h-12 px-4 sm:px-6 
                         bg-[#1a1a1a] border border-white/10 rounded-full 
                         shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)] 
                         ring-1 ring-black/50">
-            
+
           {/* Placeholder Text */}
-          <span className="text-gray-400 font-mono text-sm tracking-wide">
+          <span className="text-gray-400 font-mono text-xs sm:text-sm tracking-wide truncate">
             Search Course/Simulation
           </span>
           {/* Search Icon */}
-          <Search className="w-5 h-5 text-gray-300" />
+          <Search className="w-4 sm:w-5 h-4 sm:h-5 text-gray-300 flex-shrink-0 ml-2" />
         </div>
       </div>
     </nav>

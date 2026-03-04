@@ -13,7 +13,7 @@ import {
 import { Ray } from "@/lib/types";
 import { raySegmentReflection } from "@/lib/physics";
 import { Layer, Rect, Stage } from "react-konva";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useImage } from "react-konva-utils";
 
 const MIRROR_SEGMENT = {
@@ -33,10 +33,26 @@ export default function Playground({
   height,
 }: {
   module: string;
-  width: number;
-  height: number;
+  width?: number;
+  height?: number;
 }) {
-  const [laserPosition, setLaserPosition] = useState({ x: 200, y: 100 });
+  const [containerSize, setContainerSize] = useState({ width: width || 500, height: height || 400 });
+  const [windowSize, setWindowSize] = useState({ width: typeof window !== 'undefined' ? window.innerWidth : 1024, height: typeof window !== 'undefined' ? window.innerHeight : 768 });
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowSize({ width: window.innerWidth, height: window.innerHeight });
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Calculate responsive dimensions
+  const responsiveWidth = Math.min(containerSize.width, Math.max(250, windowSize.width * 0.9));
+  const responsiveHeight = Math.min(containerSize.height, Math.max(200, windowSize.height * 0.4));
+
+  const [laserPosition, setLaserPosition] = useState({ x: responsiveWidth / 2, y: responsiveHeight / 2 });
   const [laserRotation, setLaserRotation] = useState(10);
   const [debug, setDebug] = useState(false);
   const [image] = useImage("/laserPointer.svg");
@@ -66,7 +82,7 @@ export default function Playground({
   return (
     <>
       <div style={{ position: "absolute", top: 10, left: 10, zIndex: 10 }}>
-        <label>
+        <label className="text-xs sm:text-sm">
           <input
             type="checkbox"
             checked={debug}
@@ -75,19 +91,21 @@ export default function Playground({
           Debug Mode
         </label>
       </div>
-      <Stage width={width} height={height} background={"#f0f0f0"}>
-        <Layer>
-          <Rect width={width} height={height} stroke={"#f0f0f0"} />
-          <Mirror beam={beam} hitDistance={hitDistance} debug={debug} />
-          <LaserPointer
-            position={laserPosition}
-            rotation={laserRotation}
-            hitDistance={hitDistance}
-            onPositionChange={setLaserPosition}
-            onRotationChange={setLaserRotation}
-          />
-        </Layer>
-      </Stage>
+      <div className="w-full h-full flex justify-center items-center">
+        <Stage width={responsiveWidth} height={responsiveHeight} background={"#f0f0f0"}>
+          <Layer>
+            <Rect width={responsiveWidth} height={responsiveHeight} stroke={"#f0f0f0"} />
+            <Mirror beam={beam} hitDistance={hitDistance} debug={debug} />
+            <LaserPointer
+              position={laserPosition}
+              rotation={laserRotation}
+              hitDistance={hitDistance}
+              onPositionChange={setLaserPosition}
+              onRotationChange={setLaserRotation}
+            />
+          </Layer>
+        </Stage>
+      </div>
     </>
   );
 }
