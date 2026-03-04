@@ -2,6 +2,7 @@
 
 import Playground from "@/components/Playground";
 import Math from "@/components/Math";
+import Divider from '@/components/Divider/Divider';
 // Removed unused imports to keep it clean, add them back if you plan to use them!
 
 export default function ReflectionLesson() {
@@ -80,13 +81,12 @@ export default function ReflectionLesson() {
             Your browser does not support the video tag.
           </video>
         </div>
-
       </div>
-
+      <Divider />
       <div className="flex justify-between gap-8">
         <div className="flex flex-col space-y-4">
           <h2 className="text-2xl font-bold">Light Reflection</h2>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor: </p>
+          <p>When a ray of light strikes a smooth surface, such as a mirror, it is reflected back into the same medium. This behavior follows a simple geometric rule known as the law of reflection, denoted as following: </p>
 
           <div className="text-2xl justify-center flex py-4">
             <Math math={String.raw`\textcolor{#6bcf7f}{\theta_i} = \textcolor{#b78bf8}{\theta_{re}}`} />
@@ -101,10 +101,18 @@ export default function ReflectionLesson() {
             </li>
           </ul>
           <p>
-            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exerc itation ullamco laboris nisi ut aliquip ex ea commodo consequat.ad minim veniam, quis nostrud exerc itation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-          </p>
+            This law tells us that light reflects in a perfectly symmetric way with respect to the normal line “N” (the line perpendicular to the surface at the point of contact).
+
+            In other words, the surface does not “favor” any direction. Light arrives, interacts with the surface, and leaves at the same angle it came in, but on the opposite side of the normal.
+
+            This symmetry is why mirrors produce predictable images and why a laser beam reflects so cleanly from a flat surface          </p>
         </div>
         <Playground width={500} height={400} module="ahhh" />
+      </div>
+      <Divider />
+      <div>
+        <p>Together, the two laws of reflection fully describe how light behaves when it encounters a smooth surface. With only these simple rules, we can accurately predict the direction of reflected rays and construct precise optical models.
+          In this Goobly Article, these laws are applied in real time to trace light rays as they interact with reflective surfaces, allowing users to visualize how geometry alone governs reflection. This shows that even the most advanced optical systems are built upon remarkably simple physical principles.</p>
       </div>
     </main>
   );
