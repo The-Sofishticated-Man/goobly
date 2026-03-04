@@ -1,33 +1,93 @@
 "use client";
-import { BaseExperiment } from "@/core/BaseExperiment";
-import { ReflectionOfLightExperiment } from "@/modules/ReflectionOfLightExperiment";
-import { useEffect, useRef } from "react";
+import LaserPointer from "@/entities/LaserPointer";
+import {
+  LASER_SIZE_MULTIPLIER,
+  LASER_BEAM_OFFSET,
+} from "@/app/configs/laserPointerConfig";
+import Mirror from "@/entities/Mirror";
+import {
+  MIRROR_THICKNESS,
+  MIRROR_POSITION,
+  MIRROR_LENGTH,
+} from "@/app/configs/mirrorConfig";
+import { Ray } from "@/lib/types";
+import { raySegmentReflection } from "@/lib/physics";
+import { Layer, Rect, Stage } from "react-konva";
+import { useMemo, useState } from "react";
+import { useImage } from "react-konva-utils";
 
-export default function Playground({ module }: { module: string }) {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const experimentRef = useRef<BaseExperiment| null>(null);
+const MIRROR_SEGMENT = {
+  start: {
+    x: MIRROR_POSITION.x - MIRROR_THICKNESS / 2,
+    y: MIRROR_POSITION.y - MIRROR_LENGTH / 2,
+  },
+  end: {
+    x: MIRROR_POSITION.x - MIRROR_THICKNESS / 2,
+    y: MIRROR_POSITION.y + MIRROR_LENGTH / 2,
+  },
+};
 
-  useEffect(() => {
-    if (!canvasRef.current) return;
-    const experiment = new ReflectionOfLightExperiment(
-      canvasRef.current,
-      700,
-      500,
-      0xffffff
-    );
-    experimentRef.current = experiment;
+export default function Playground({
+  module,
+  width,
+  height,
+}: {
+  module: string;
+  width: number;
+  height: number;
+}) {
+  const [laserPosition, setLaserPosition] = useState({ x: 200, y: 100 });
+  const [laserRotation, setLaserRotation] = useState(10);
+  const [debug, setDebug] = useState(false);
+  const [image] = useImage("/laserPointer.svg");
 
-    experiment.init().catch((err) => {
-      // handle/log errors (don't crash the UI)
-      console.error("Experiment init failed:", err);
-    });
-
-    return () => {
-      experimentRef.current?.destroy();
-      experimentRef.current = null;
+  // Compute beam synchronously — no useEffect delay
+  const beam = useMemo<Ray | null>(() => {
+    if (!image) return null;
+    const beamStartX =
+      (image.width * LASER_SIZE_MULTIPLIER) / 2 + LASER_BEAM_OFFSET;
+    const rad = (laserRotation * Math.PI) / 180;
+    return {
+      origin: {
+        x: laserPosition.x + beamStartX * Math.cos(rad),
+        y: laserPosition.y + beamStartX * Math.sin(rad),
+      },
+      direction: { x: Math.cos(rad), y: Math.sin(rad) },
     };
-    // intentionally empty deps — canvasRef doesn't change
-  }, []);
+  }, [laserPosition.x, laserPosition.y, laserRotation, image]);
 
-  return <canvas ref={canvasRef} />;
+  // Compute intersection synchronously — same render frame
+  const hitDistance = useMemo(() => {
+    if (!beam) return null;
+    const reflection = raySegmentReflection(beam, MIRROR_SEGMENT);
+    return reflection?.distance ?? null;
+  }, [beam]);
+
+  return (
+    <>
+      <div style={{ position: "absolute", top: 10, left: 10, zIndex: 10 }}>
+        <label>
+          <input
+            type="checkbox"
+            checked={debug}
+            onChange={(e) => setDebug(e.target.checked)}
+          />
+          Debug Mode
+        </label>
+      </div>
+      <Stage width={width} height={height} background={"#f0f0f0"}>
+        <Layer>
+          <Rect width={width} height={height} stroke={"#f0f0f0"} />
+          <Mirror beam={beam} hitDistance={hitDistance} debug={debug} />
+          <LaserPointer
+            position={laserPosition}
+            rotation={laserRotation}
+            hitDistance={hitDistance}
+            onPositionChange={setLaserPosition}
+            onRotationChange={setLaserRotation}
+          />
+        </Layer>
+      </Stage>
+    </>
+  );
 }
