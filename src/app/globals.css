@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --background: #2626262;
+  --background: #262626;
   --foreground: #e0e0e0;
   --accent: #d4af37;
   --accent-purple: 
@@ -14,14 +14,9 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #262626;
-    --foreground: #e0e0e0;
-    --accent: #d4af37;
-  }
+video {
+  filter: brightness(1.06) contrast(1);
 }
-
 html {
   scroll-behavior: smooth;
   height: 100%;
