@@ -50,9 +50,9 @@ export default function Playground({
 
   // Calculate responsive dimensions
   const responsiveWidth = Math.min(containerSize.width, Math.max(250, windowSize.width * 0.9));
-  const responsiveHeight = Math.min(containerSize.height, Math.max(200, windowSize.height * 0.4));
+  const responsiveHeight = Math.min(containerSize.height, Math.max(200, windowSize.height * 0.9));
 
-  const [laserPosition, setLaserPosition] = useState({ x: responsiveWidth / 2, y: responsiveHeight / 2 });
+  const [laserPosition, setLaserPosition] = useState({ x: responsiveWidth/2 , y: responsiveHeight/2 });
   const [laserRotation, setLaserRotation] = useState(10);
   const [debug, setDebug] = useState(false);
   const [image] = useImage("/laserPointer.svg");
@@ -92,9 +92,9 @@ export default function Playground({
         </label>
       </div>
       <div className="w-full h-full flex justify-center items-center">
-        <Stage width={responsiveWidth} height={responsiveHeight} background={"#f0f0f0"}>
+        <Stage width={responsiveWidth} height={responsiveHeight} background={"#262626"}>
           <Layer>
-            <Rect width={responsiveWidth} height={responsiveHeight} stroke={"#f0f0f0"} />
+            <Rect width={responsiveWidth} height={responsiveHeight} stroke={"#262626"} />
             <Mirror beam={beam} hitDistance={hitDistance} debug={debug} />
             <LaserPointer
               position={laserPosition}
