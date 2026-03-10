@@ -71,7 +71,7 @@ export default function ReflectionLesson() {
         {/* Video takes up the other half */}
         <div className="w-full lg:w-1/2 overflow-hidden rounded-lg px-2 sm:px-4">
           <video
-            src="/Farmadark mode.mp4"
+            src="/idklol.mp4"
             autoPlay
             loop
             muted
