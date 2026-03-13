@@ -11,7 +11,7 @@ export default function ReflectionLesson() {
       <div className="lesson-container mx-auto w-full">
         <h1 className="text-3xl font-bold uppercase mb-2">Light Reflection</h1>
         <h2 className="text-xl capitalize mb-4">Reflection on a Plane Mirror</h2>
-        <p>
+        <p className="flex justify-center text-center w-dvh mx-42">
           Light reflection is a basic yet fascinating concept in Geometrical
           Optics. It shows how light bounces off surfaces like mirrors or
           metals, following simple laws we can see in everyday life. Despite its
@@ -76,7 +76,7 @@ export default function ReflectionLesson() {
             loop
             muted
             playsInline
-            className="w-full h-auto object-cover"
+            className="w-full h-auto object-cover bg-background"
           >
             Your browser does not support the video tag.
           </video>

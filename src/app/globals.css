@@ -15,7 +15,7 @@
 }
 
 video {
-  filter: brightness(1.06) contrast(1);
+  filter: brightness(1.06) contrast(0.99);
 }
 html {
   scroll-behavior: smooth;

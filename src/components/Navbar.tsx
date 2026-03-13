@@ -14,7 +14,7 @@ export default function Navbar() {
         className="h-8 sm:h-12 md:h-14 w-auto flex-shrink-0"
       />
       
-      <div className="relative w-full flex justify-center">
+      <div className="relative w-full flex justify-center bg-gray-900 rounded-full">
         {/* The Search Bar Container */}
         <div className="flex items-center justify-between w-full h-10 sm:h-12 px-4 sm:px-6 bg-[#1a1a1a] border border-white/10 rounded-full shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)] ring-1 ring-black/50">
           {/* Placeholder Text */}
