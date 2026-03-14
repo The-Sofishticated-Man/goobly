@@ -42,6 +42,12 @@ import {
   NORMAL_LENGTH,
   NORMAL_OPACITY,
   NORMAL_STROKE_WIDTH,
+  TANGENT_COLOR,
+  TANGENT_DASH,
+  TANGENT_HALF_LENGTH,
+  TANGENT_LABEL_OFFSET,
+  TANGENT_OPACITY,
+  TANGENT_STROKE_WIDTH,
 } from "@/app/configs/mirrorConfig";
 import {
   CONVEX_MIRROR_LENGTH,
@@ -183,6 +189,8 @@ function AngleAnnotation({
   const localY = intersection.y - CONVEX_MIRROR_POSITION.y;
   const normalX = (intersection.x - ARC_CENTER_WORLD.x) / CONVEX_MIRROR_RADIUS;
   const normalY = (intersection.y - ARC_CENTER_WORLD.y) / CONVEX_MIRROR_RADIUS;
+  const tangentX = -normalY;
+  const tangentY = normalX;
   const normalAngleDeg = Math.atan2(normalY, normalX) * (180 / Math.PI);
   const incidentAngleRad = Math.acos(
     Math.abs(incidentDir.x * normalX + incidentDir.y * normalY),
@@ -200,6 +208,12 @@ function AngleAnnotation({
     (reflectedArc.start + reflectedArc.sweep / 2) * (Math.PI / 180);
   const incidentLabelRadius = ARC_INCIDENT_RADIUS + ANGLE_LABEL_OFFSET;
   const reflectedLabelRadius = ARC_REFLECTED_RADIUS + ANGLE_LABEL_OFFSET;
+  const tangentPoints = [
+    localX - tangentX * TANGENT_HALF_LENGTH,
+    localY - tangentY * TANGENT_HALF_LENGTH,
+    localX + tangentX * TANGENT_HALF_LENGTH,
+    localY + tangentY * TANGENT_HALF_LENGTH,
+  ];
 
   return (
     <Group listening={false}>
@@ -265,6 +279,33 @@ function AngleAnnotation({
         fontSize={ANGLE_LABEL_FONT_SIZE}
         fontStyle="bold"
         fill={ARC_REFLECTED_COLOR}
+      />
+
+      <Line
+        points={tangentPoints}
+        stroke="#000000"
+        strokeWidth={TANGENT_STROKE_WIDTH + 2}
+        opacity={0.8}
+        dash={TANGENT_DASH}
+        lineCap="round"
+      />
+
+      <Line
+        points={tangentPoints}
+        stroke={TANGENT_COLOR}
+        strokeWidth={TANGENT_STROKE_WIDTH}
+        opacity={TANGENT_OPACITY}
+        dash={TANGENT_DASH}
+        lineCap="round"
+      />
+
+      <Text
+        x={localX + tangentX * (TANGENT_HALF_LENGTH + TANGENT_LABEL_OFFSET) - 4}
+        y={localY + tangentY * (TANGENT_HALF_LENGTH + TANGENT_LABEL_OFFSET) - 9}
+        text="T"
+        fontSize={NORMAL_LABEL_FONT_SIZE}
+        fontStyle="bold"
+        fill={TANGENT_COLOR}
       />
     </Group>
   );

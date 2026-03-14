@@ -32,6 +32,14 @@ export const ARC_REFLECTED_COLOR = PALETTE.accent1;
 export const ANGLE_LABEL_FONT_SIZE = 13;
 export const ANGLE_LABEL_OFFSET = 22; // extra distance past the arc
 
+// Tangent line
+export const TANGENT_HALF_LENGTH = 90;
+export const TANGENT_COLOR = "#00e5ff";
+export const TANGENT_STROKE_WIDTH = 4;
+export const TANGENT_DASH: number[] = [10, 5];
+export const TANGENT_OPACITY = 1;
+export const TANGENT_LABEL_OFFSET = 6;
+
 // Debug overlay
 export const DEBUG_ORIGIN_RADIUS = 5;
 export const DEBUG_ORIGIN_COLOR = "red";
