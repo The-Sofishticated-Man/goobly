@@ -4,7 +4,7 @@ import {
   LASER_SIZE_MULTIPLIER,
   LASER_BEAM_OFFSET,
 } from "@/app/configs/laserPointerConfig";
-import Mirror from "@/entities/Mirror";
+import FlatMirror from "@/entities/FlatMirror";
 import {
   MIRROR_THICKNESS,
   MIRROR_POSITION,
@@ -36,23 +36,38 @@ export default function Playground({
   width?: number;
   height?: number;
 }) {
-  const [containerSize, setContainerSize] = useState({ width: width || 500, height: height || 400 });
-  const [windowSize, setWindowSize] = useState({ width: typeof window !== 'undefined' ? window.innerWidth : 1024, height: typeof window !== 'undefined' ? window.innerHeight : 768 });
+  const [containerSize, setContainerSize] = useState({
+    width: width || 500,
+    height: height || 400,
+  });
+  const [windowSize, setWindowSize] = useState({
+    width: typeof window !== "undefined" ? window.innerWidth : 1024,
+    height: typeof window !== "undefined" ? window.innerHeight : 768,
+  });
 
   useEffect(() => {
     const handleResize = () => {
       setWindowSize({ width: window.innerWidth, height: window.innerHeight });
     };
 
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   // Calculate responsive dimensions
-  const responsiveWidth = Math.min(containerSize.width, Math.max(250, windowSize.width * 0.9));
-  const responsiveHeight = Math.min(containerSize.height, Math.max(200, windowSize.height * 0.9));
+  const responsiveWidth = Math.min(
+    containerSize.width,
+    Math.max(250, windowSize.width * 0.9),
+  );
+  const responsiveHeight = Math.min(
+    containerSize.height,
+    Math.max(200, windowSize.height * 0.9),
+  );
 
-  const [laserPosition, setLaserPosition] = useState({ x: responsiveWidth/2 , y: responsiveHeight/2 });
+  const [laserPosition, setLaserPosition] = useState({
+    x: responsiveWidth / 2,
+    y: responsiveHeight / 2,
+  });
   const [laserRotation, setLaserRotation] = useState(10);
   const [debug, setDebug] = useState(false);
   const [image] = useImage("/laserPointer.svg");
@@ -92,10 +107,18 @@ export default function Playground({
         </label>
       </div>
       <div className="w-full h-full flex justify-center items-center">
-        <Stage width={responsiveWidth} height={responsiveHeight} background={"#262626"}>
+        <Stage
+          width={responsiveWidth}
+          height={responsiveHeight}
+          background={"#262626"}
+        >
           <Layer>
-            <Rect width={responsiveWidth} height={responsiveHeight} stroke={"#262626"} />
-            <Mirror beam={beam} hitDistance={hitDistance} debug={debug} />
+            <Rect
+              width={responsiveWidth}
+              height={responsiveHeight}
+              stroke={"#262626"}
+            />
+            <FlatMirror beam={beam} hitDistance={hitDistance} debug={debug} />
             <LaserPointer
               position={laserPosition}
               rotation={laserRotation}

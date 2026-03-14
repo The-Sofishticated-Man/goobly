@@ -50,7 +50,7 @@ import {
 
 export { MIRROR_LENGTH, MIRROR_POSITION };
 
-export default function Mirror({
+export default function FlatMirror({
   beam,
   hitDistance,
   debug = false,

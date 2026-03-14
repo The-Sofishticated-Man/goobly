@@ -1,6 +1,6 @@
 "use client";
 
-import Playground from "@/components/Playground";
+import Playground from "@/components/FlatMirrorReflectionPlayground";
 import Math from "@/components/Math";
 import Divider from '@/components/Divider/Divider';
 // Removed unused imports to keep it clean, add them back if you plan to use them!
