@@ -3,6 +3,7 @@
 import FlatMirrorReflectionPlayground from "@/components/FlatMirrorReflectionPlayground";
 import Math from "@/components/Math";
 import Divider from "@/components/Divider/Divider";
+import ConvexMirrorReflectionPlayground from "@/components/ConvexMirrorReflectionPlayground";
 // Removed unused imports to keep it clean, add them back if you plan to use them!
 
 export default function ReflectionLesson() {
@@ -140,6 +141,11 @@ export default function ReflectionLesson() {
         </div>
       </div>
       <Divider />
+      <ConvexMirrorReflectionPlayground
+        width={800}
+        height={600}
+        module={"ahhh"}
+      />
       <div className="w-full px-2 sm:px-4 mx-auto">
         <p className="max-w-full text-center">
           Together, the two laws of reflection fully describe how light behaves

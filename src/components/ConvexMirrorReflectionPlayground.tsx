@@ -1,33 +1,41 @@
 "use client";
+import { useMemo, useState, useEffect } from "react";
+import { Layer, Rect, Stage } from "react-konva";
+import { useImage } from "react-konva-utils";
 import LaserPointer from "@/entities/LaserPointer";
+import ConvexMirror from "@/entities/ConvexMirror";
 import {
   LASER_SIZE_MULTIPLIER,
   LASER_BEAM_OFFSET,
 } from "@/app/configs/laserPointerConfig";
-import FlatMirror from "@/entities/FlatMirror";
 import {
-  MIRROR_THICKNESS,
-  MIRROR_POSITION,
-  MIRROR_LENGTH,
-} from "@/app/configs/mirrorConfig";
+  CONVEX_MIRROR_LENGTH,
+  CONVEX_MIRROR_POSITION,
+  CONVEX_MIRROR_RADIUS,
+  CONVEX_MIRROR_THICKNESS,
+} from "@/app/configs/convexMirrorConfig";
+import { rayCircleArcReflection } from "@/lib/physics";
 import { Ray } from "@/lib/types";
-import { raySegmentReflection } from "@/lib/physics";
-import { Layer, Rect, Stage } from "react-konva";
-import { useMemo, useState, useEffect } from "react";
-import { useImage } from "react-konva-utils";
 
-const MIRROR_SEGMENT = {
-  start: {
-    x: MIRROR_POSITION.x - MIRROR_THICKNESS / 2,
-    y: MIRROR_POSITION.y - MIRROR_LENGTH / 2,
+const ARC_HALF_ANGLE = Math.asin(
+  CONVEX_MIRROR_LENGTH / (2 * CONVEX_MIRROR_RADIUS),
+);
+const ARC_START_ANGLE = Math.PI - ARC_HALF_ANGLE;
+const ARC_END_ANGLE = Math.PI + ARC_HALF_ANGLE;
+
+const CONVEX_MIRROR_ARC = {
+  center: {
+    x:
+      CONVEX_MIRROR_POSITION.x +
+      (CONVEX_MIRROR_RADIUS - CONVEX_MIRROR_THICKNESS / 2),
+    y: CONVEX_MIRROR_POSITION.y,
   },
-  end: {
-    x: MIRROR_POSITION.x - MIRROR_THICKNESS / 2,
-    y: MIRROR_POSITION.y + MIRROR_LENGTH / 2,
-  },
+  radius: CONVEX_MIRROR_RADIUS,
+  startAngle: ARC_START_ANGLE,
+  endAngle: ARC_END_ANGLE,
 };
 
-export default function FlatMirrorReflectionPlayground({
+export default function ConvexMirrorReflectionPlayground({
   module,
   width,
   height,
@@ -36,7 +44,9 @@ export default function FlatMirrorReflectionPlayground({
   width?: number;
   height?: number;
 }) {
-  const [containerSize, setContainerSize] = useState({
+  void module;
+
+  const [containerSize] = useState({
     width: width || 500,
     height: height || 400,
   });
@@ -54,7 +64,6 @@ export default function FlatMirrorReflectionPlayground({
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Calculate responsive dimensions
   const responsiveWidth = Math.min(
     containerSize.width,
     Math.max(250, windowSize.width * 0.9),
@@ -72,25 +81,26 @@ export default function FlatMirrorReflectionPlayground({
   const [debug, setDebug] = useState(false);
   const [image] = useImage("/laserPointer.svg");
 
-  // Compute beam synchronously — no useEffect delay
   const beam = useMemo<Ray | null>(() => {
     if (!image) return null;
+
     const beamStartX =
       (image.width * LASER_SIZE_MULTIPLIER) / 2 + LASER_BEAM_OFFSET;
-    const rad = (laserRotation * Math.PI) / 180;
+    const radians = (laserRotation * Math.PI) / 180;
+
     return {
       origin: {
-        x: laserPosition.x + beamStartX * Math.cos(rad),
-        y: laserPosition.y + beamStartX * Math.sin(rad),
+        x: laserPosition.x + beamStartX * Math.cos(radians),
+        y: laserPosition.y + beamStartX * Math.sin(radians),
       },
-      direction: { x: Math.cos(rad), y: Math.sin(rad) },
+      direction: { x: Math.cos(radians), y: Math.sin(radians) },
     };
   }, [laserPosition.x, laserPosition.y, laserRotation, image]);
 
-  // Compute intersection synchronously — same render frame
   const hitDistance = useMemo(() => {
     if (!beam) return null;
-    const reflection = raySegmentReflection(beam, MIRROR_SEGMENT);
+
+    const reflection = rayCircleArcReflection(beam, CONVEX_MIRROR_ARC);
     return reflection?.distance ?? null;
   }, [beam]);
 
@@ -114,7 +124,7 @@ export default function FlatMirrorReflectionPlayground({
               height={responsiveHeight}
               fill={"#262626"}
             />
-            <FlatMirror beam={beam} hitDistance={hitDistance} debug={debug} />
+            <ConvexMirror beam={beam} hitDistance={hitDistance} debug={debug} />
             <LaserPointer
               position={laserPosition}
               rotation={laserRotation}
