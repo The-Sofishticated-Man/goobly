@@ -157,11 +157,6 @@ export default function ReflectionLesson() {
         height={600}
         module={"ahhh"}
       />
-      <ConvexMirrorReflectionPlayground
-        width={800}
-        height={600}
-        module={"ahhh"}
-      />
       <div className="w-full px-2 sm:px-4 mx-auto">
         <p className="max-w-full text-center">
           Together, the two laws of reflection fully describe how light behaves

@@ -33,10 +33,10 @@ export const ANGLE_LABEL_FONT_SIZE = 13;
 export const ANGLE_LABEL_OFFSET = 22; // extra distance past the arc
 
 // Tangent line
-export const TANGENT_HALF_LENGTH = 90;
-export const TANGENT_COLOR = "#00e5ff";
-export const TANGENT_STROKE_WIDTH = 4;
-export const TANGENT_DASH: number[] = [10, 5];
+export const TANGENT_HALF_LENGTH = 120;
+export const TANGENT_COLOR = PALETTE.accent4;
+export const TANGENT_STROKE_WIDTH = 1.5;
+export const TANGENT_DASH: number[] = [6, 4];
 export const TANGENT_OPACITY = 1;
 export const TANGENT_LABEL_OFFSET = 6;
 

@@ -283,7 +283,6 @@ function AngleAnnotation({
 
       <Line
         points={tangentPoints}
-        stroke="#000000"
         strokeWidth={TANGENT_STROKE_WIDTH + 2}
         opacity={0.8}
         dash={TANGENT_DASH}
