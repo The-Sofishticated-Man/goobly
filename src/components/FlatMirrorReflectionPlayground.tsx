@@ -27,7 +27,7 @@ const MIRROR_SEGMENT = {
   },
 };
 
-export default function Playground({
+export default function FlatMirrorReflectionPlayground({
   module,
   width,
   height,
