@@ -1,3 +1,5 @@
+import { PALETTE } from "@/lib/colors";
+
 // Mirror surface
 export const MIRROR_LENGTH = 600;
 export const MIRROR_THICKNESS = 8;
@@ -23,8 +25,8 @@ export const ARC_INCIDENT_RADIUS = 60;
 export const ARC_REFLECTED_RADIUS = 80;
 export const ARC_STROKE_WIDTH = 1.5;
 export const ARC_OPACITY = 0.9;
-export const ARC_INCIDENT_COLOR = "#BE9AD2";
-export const ARC_REFLECTED_COLOR = "#A0E8A9";
+export const ARC_INCIDENT_COLOR = PALETTE.accent2;
+export const ARC_REFLECTED_COLOR = PALETTE.accent1;
 
 // Angle labels
 export const ANGLE_LABEL_FONT_SIZE = 13;

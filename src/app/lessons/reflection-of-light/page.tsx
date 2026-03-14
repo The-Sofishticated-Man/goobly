@@ -3,6 +3,7 @@
 import FlatMirrorReflectionPlayground from "@/components/FlatMirrorReflectionPlayground";
 import Math from "@/components/Math";
 import Divider from "@/components/Divider/Divider";
+import { PALETTE } from "@/lib/colors";
 // Removed unused imports to keep it clean, add them back if you plan to use them!
 
 export default function ReflectionLesson() {
@@ -31,7 +32,7 @@ export default function ReflectionLesson() {
       </div>
 
       <div className="lesson-container mx-auto w-full">
-        <h3 className="text-yellow-400 text-xl font-semibold mb-2">
+        <h3 className="text-(--color-accent-3) text-xl font-semibold mb-2">
           Let's explore the details
         </h3>
         <p>
@@ -45,7 +46,7 @@ export default function ReflectionLesson() {
       <div className="flex flex-col lg:flex-row items-center justify-between gap-6 md:gap-8 mx-auto w-full">
         {/* Text takes up half the width on desktop */}
         <div className="w-full lg:w-1/2 space-y-4 px-2 sm:px-4">
-          <h3 className="text-yellow-400 text-xl font-semibold">
+          <h3 className="text-(--color-accent-3) text-xl font-semibold">
             First Law of Reflection
           </h3>
           <p>
@@ -56,22 +57,28 @@ export default function ReflectionLesson() {
 
           <div className="text-2xl flex justify-center py-4">
             <Math
-              math={String.raw`\textcolor{#ff6b6b}{\vec{n}} \cdot (\textcolor{#feca57}{\vec{i}} \times \textcolor{#feca57}{\vec{r}}) = 0`}
+              math={String.raw`\textcolor{${PALETTE.accent4}}{\vec{n}} \cdot (\textcolor{${PALETTE.accent3}}{\vec{i}} \times \textcolor{${PALETTE.accent3}}{\vec{r}}) = 0`}
             />
           </div>
 
           <ul className="list-disc list-inside space-y-2">
             <li>
-              <Math math={String.raw`\textcolor{#ff6b6b}{\vec{n}}`} /> Normal
-              vector
+              <Math
+                math={String.raw`\textcolor{${PALETTE.accent4}}{\vec{n}}`}
+              />{" "}
+              Normal vector
             </li>
             <li>
-              <Math math={String.raw`\textcolor{#feca57}{\vec{i}}`} /> Incident
-              ray
+              <Math
+                math={String.raw`\textcolor{${PALETTE.accent3}}{\vec{i}}`}
+              />{" "}
+              Incident ray
             </li>
             <li>
-              <Math math={String.raw`\textcolor{#feca57}{\vec{r}}`} /> Reflected
-              ray
+              <Math
+                math={String.raw`\textcolor{${PALETTE.accent3}}{\vec{r}}`}
+              />{" "}
+              Reflected ray
             </li>
           </ul>
         </div>
@@ -103,18 +110,22 @@ export default function ReflectionLesson() {
 
           <div className="text-2xl justify-center flex py-4">
             <Math
-              math={String.raw`\textcolor{#6bcf7f}{\theta_i} = \textcolor{#b78bf8}{\theta_{re}}`}
+              math={String.raw`\textcolor{${PALETTE.accent1}}{\theta_i} = \textcolor{${PALETTE.accent2}}{\theta_{re}}`}
             />
           </div>
 
           <ul className="list-disc list-inside space-y-2">
             <li>
-              <Math math={String.raw`\textcolor{#6bcf7f}{\theta_i}`} />:
-              Incident Angle
+              <Math
+                math={String.raw`\textcolor{${PALETTE.accent1}}{\theta_i}`}
+              />
+              : Incident Angle
             </li>
             <li>
-              <Math math={String.raw`\textcolor{#b78bf8}{\theta_{re}}`} />:
-              Reflected Angle
+              <Math
+                math={String.raw`\textcolor{${PALETTE.accent2}}{\theta_{re}}`}
+              />
+              : Reflected Angle
             </li>
           </ul>
           <p>
