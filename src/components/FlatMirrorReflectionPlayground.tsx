@@ -12,7 +12,6 @@ import {
 } from "@/app/configs/mirrorConfig";
 import { Ray } from "@/lib/types";
 import { raySegmentReflection } from "@/lib/physics";
-import { PALETTE } from "@/lib/colors";
 import { Layer, Rect, Stage } from "react-konva";
 import { useMemo, useState, useEffect } from "react";
 import { useImage } from "react-konva-utils";
@@ -111,13 +110,13 @@ export default function FlatMirrorReflectionPlayground({
         <Stage
           width={responsiveWidth}
           height={responsiveHeight}
-          background={PALETTE.background}
+          background={"#262626"}
         >
           <Layer>
             <Rect
               width={responsiveWidth}
               height={responsiveHeight}
-              stroke={PALETTE.background}
+              stroke={"#262626"}
             />
             <FlatMirror beam={beam} hitDistance={hitDistance} debug={debug} />
             <LaserPointer

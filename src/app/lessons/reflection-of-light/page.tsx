@@ -3,18 +3,21 @@
 import FlatMirrorReflectionPlayground from "@/components/FlatMirrorReflectionPlayground";
 import Math from "@/components/Math";
 import Divider from "@/components/Divider/Divider";
-import { PALETTE } from "@/lib/colors";
-// Removed unused imports to keep it clean, add them back if you plan to use them!
 
 export default function ReflectionLesson() {
   return (
     <main className="mx-auto space-y-8 sm:space-y-12 p-4 sm:p-6 md:p-8 lg:p-10 w-full max-w-full lg:max-w-6xl xl:max-w-7xl 2xl:max-w-[90%]">
+      
+      {/* --- Intro Section --- */}
       <div className="lesson-container mx-auto w-full">
-        <h1 className="text-3xl font-bold uppercase mb-2">Light Reflection</h1>
-        <h2 className="text-xl capitalize mb-4">
-          Reflection on a Plane Mirror
+        <h1 className="font-bold mb-2 text-[var(--accent)] tracking-[0.15em] text-[clamp(3rem,8vw,8rem)] leading-none">
+          LIGHT REFLECTION
+        </h1>
+        <h2 className="capitalize font-normal text-[#999999] mb-8 tracking-[0.05em] text-[clamp(1.1rem,4vw,1.5rem)]">
+          Plan, Curved, and Periscope Mirror 
         </h2>
-        <p className="flex justify-center text-center w-dvh mx-42">
+        {/* Replaced the buggy w-dvh and mx-42 with the proper max-w and mx-auto from your CSS */}
+        <p className="text-[clamp(0.875rem,2vw,1rem)] leading-[1.6] text-left my-6 text-[#cccccc] max-w-[90%] mx-auto">
           Light reflection is a basic yet fascinating concept in Geometrical
           Optics. It shows how light bounces off surfaces like mirrors or
           metals, following simple laws we can see in everyday life. Despite its
@@ -32,24 +35,23 @@ export default function ReflectionLesson() {
       </div>
 
       <div className="lesson-container mx-auto w-full">
-        <h3 className="text-(--color-accent-3) text-xl font-semibold mb-2">
+        <h3 className="font-semibold text-[var(--accent)] mt-8 mb-4 text-[clamp(1.1rem,3vw,1.3rem)]">
           Let's explore the details
         </h3>
-        <p>
+        <p className="text-[clamp(0.875rem,2vw,1rem)] leading-[1.6] text-center my-6 text-[#cccccc] max-w-[90%] mx-auto">
           When light strikes a reflective surface, its behavior is described by
           the Two Laws of Reflection, also known as the first and second laws of
           Snell-Descartes.
         </p>
       </div>
 
-      {/* Added responsive Flexbox: columns on mobile, rows on medium screens+ */}
+      {/* --- First Law Section --- */}
       <div className="flex flex-col lg:flex-row items-center justify-between gap-6 md:gap-8 mx-auto w-full">
-        {/* Text takes up half the width on desktop */}
         <div className="w-full lg:w-1/2 space-y-4 px-2 sm:px-4">
-          <h3 className="text-(--color-accent-3) text-xl font-semibold">
+          <h3 className="font-semibold text-[var(--accent)] text-[clamp(1.1rem,3vw,1.3rem)]">
             First Law of Reflection
           </h3>
-          <p>
+          <p className="text-[#cccccc] leading-[1.6] text-[clamp(0.875rem,2vw,1rem)]">
             The incident ray, the <strong>reflected</strong> ray, and the normal
             to the surface at the point of incidence all lie in the same plane,
             named the Plane of Incidence, presented such as:
@@ -57,33 +59,27 @@ export default function ReflectionLesson() {
 
           <div className="text-2xl flex justify-center py-4">
             <Math
-              math={String.raw`\textcolor{${PALETTE.accent4}}{\vec{n}} \cdot (\textcolor{${PALETTE.accent3}}{\vec{i}} \times \textcolor{${PALETTE.accent3}}{\vec{r}}) = 0`}
+              math={String.raw`\textcolor{#ff6b6b}{\vec{n}} \cdot (\textcolor{#feca57}{\vec{i}} \times \textcolor{#feca57}{\vec{r}}) = 0`}
             />
           </div>
 
-          <ul className="list-disc list-inside space-y-2">
+          <ul className="list-disc list-inside space-y-2 text-[#cccccc] text-[clamp(0.875rem,2vw,1rem)]">
             <li>
-              <Math
-                math={String.raw`\textcolor{${PALETTE.accent4}}{\vec{n}}`}
-              />{" "}
-              Normal vector
+              <Math math={String.raw`\textcolor{#ff6b6b}{\vec{n}}`} /> Normal vector
             </li>
             <li>
-              <Math
-                math={String.raw`\textcolor{${PALETTE.accent3}}{\vec{i}}`}
-              />{" "}
-              Incident ray
+              <Math math={String.raw`\textcolor{#feca57}{\vec{i}}`} /> Incident ray
             </li>
             <li>
-              <Math
-                math={String.raw`\textcolor{${PALETTE.accent3}}{\vec{r}}`}
-              />{" "}
-              Reflected ray
+              <Math math={String.raw`\textcolor{#feca57}{\vec{r}}`} /> Reflected ray
             </li>
           </ul>
+          <p className="text-[#cccccc] leading-[1.6] text-[clamp(0.875rem,2vw,1rem)]">
+            This condition ensures that reflection is a strictly two-dimensional phenomenon at the point of interaction. Once the incident ray and the surface normal are defined, the reflected ray is fully constrained to the same plane.
+            As a result, light does not scatter randomly when reflecting from a smooth surface. Its behavior remains geometrically predictable, which allows reflection to be represented accurately using simple ray diagrams and computational models.
+          </p>
         </div>
 
-        {/* Video takes up the other half */}
         <div className="w-full lg:w-1/2 overflow-hidden rounded-lg px-2 sm:px-4">
           <video
             src="/idklol.mp4"
@@ -97,11 +93,16 @@ export default function ReflectionLesson() {
           </video>
         </div>
       </div>
+      
       <Divider />
+      
+      {/* --- Second Law Section --- */}
       <div className="flex flex-col lg:flex-row justify-between gap-6 md:gap-8 mx-auto w-full">
         <div className="w-full lg:w-1/2 flex flex-col space-y-4 px-2 sm:px-4">
-          <h2 className="text-2xl md:text-3xl font-bold">Light Reflection</h2>
-          <p>
+          <h2 className="font-bold text-[var(--accent)] text-[clamp(1.5rem,4vw,2rem)]">
+            Light Reflection
+          </h2>
+          <p className="text-[#cccccc] leading-[1.6] text-[clamp(0.875rem,2vw,1rem)]">
             When a ray of light strikes a smooth surface, such as a mirror, it
             is reflected back into the same medium. This behavior follows a
             simple geometric rule known as the law of reflection, denoted as
@@ -110,25 +111,19 @@ export default function ReflectionLesson() {
 
           <div className="text-2xl justify-center flex py-4">
             <Math
-              math={String.raw`\textcolor{${PALETTE.accent1}}{\theta_i} = \textcolor{${PALETTE.accent2}}{\theta_{re}}`}
+              math={String.raw`\textcolor{#6bcf7f}{\theta_i} = \textcolor{#b78bf8}{\theta_{re}}`}
             />
           </div>
 
-          <ul className="list-disc list-inside space-y-2">
+          <ul className="list-disc list-inside space-y-2 text-[#cccccc] text-[clamp(0.875rem,2vw,1rem)]">
             <li>
-              <Math
-                math={String.raw`\textcolor{${PALETTE.accent1}}{\theta_i}`}
-              />
-              : Incident Angle
+              <Math math={String.raw`\textcolor{#6bcf7f}{\theta_i}`} />: Incident Angle
             </li>
             <li>
-              <Math
-                math={String.raw`\textcolor{${PALETTE.accent2}}{\theta_{re}}`}
-              />
-              : Reflected Angle
+              <Math math={String.raw`\textcolor{#b78bf8}{\theta_{re}}`} />: Reflected Angle
             </li>
           </ul>
-          <p>
+          <p className="text-[#cccccc] leading-[1.6] text-[clamp(0.875rem,2vw,1rem)]">
             This law tells us that light reflects in a perfectly symmetric way
             with respect to the normal line “N” (the line perpendicular to the
             surface at the point of contact).
@@ -150,9 +145,12 @@ export default function ReflectionLesson() {
           />
         </div>
       </div>
+      
       <Divider />
-      <div className="w-full px-2 sm:px-4 mx-auto">
-        <p className="max-w-full text-center">
+      
+      {/* --- Footer Note Section --- */}
+      <div className="w-full px-2 sm:px-4 mx-auto pb-8">
+        <p className="text-center text-[#cccccc] leading-[1.6] text-[clamp(0.875rem,2vw,1rem)] max-w-4xl mx-auto">
           Together, the two laws of reflection fully describe how light behaves
           when it encounters a smooth surface. With only these simple rules, we
           can accurately predict the direction of reflected rays and construct
