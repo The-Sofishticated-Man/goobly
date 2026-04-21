@@ -1,12 +1,11 @@
 // components/Navbar.jsx
 "use client"; 
-
 import { useState } from "react";
 import { Search } from "lucide-react";
 import Image from "next/image";
 import LoginButton from "./LoginButton";
 import LoginModal from "./LoginModal";
-import SignupModal from "./SingupModal"; // Exact match!
+import SignupModal from "./SingupModal"; 
 
 export default function Navbar() {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
