@@ -5,6 +5,8 @@ import Math from "@/components/Math";
 import Divider from "@/components/Divider/Divider";
 import { PALETTE } from "@/lib/colors";
 import ConvexMirrorReflectionPlayground from "@/components/ConvexMirrorReflectionPlayground";
+import MCQuestion from "@/components/MCQuestion";
+import Link from "next/link";
 // Removed unused imports to keep it clean, add them back if you plan to use them!
 
 export default function ReflectionLesson() {
@@ -168,6 +170,14 @@ export default function ReflectionLesson() {
           reflection. This shows that even the most advanced optical systems are
           built upon remarkably simple physical principles.
         </p>
+      </div>
+      <div className="w-full flex justify-end pt-12 pb-8 px-2 sm:px-4">
+        <Link
+          href="/lessons/reflection-of-light/reflection-of-light-MCQ"
+          className="bg-[#FFD700] text-black px-12 py-4 rounded-xl font-bold uppercase tracking-wider hover:brightness-110 shadow-[0_4px_0_#b89b00] transition-all"
+        >
+          Practice Reflection →
+        </Link>
       </div>
     </main>
   );
