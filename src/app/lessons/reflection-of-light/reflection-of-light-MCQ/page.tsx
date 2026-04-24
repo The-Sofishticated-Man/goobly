@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Math from "@/components/Math";
-import { PALETTE } from "@/lib/colors";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { db } from "../../../../firebaseConfig"; // ⚠️ Adjust this path to your firebaseConfig if needed
 
+// --- 1. THE HARDCODED DATA (Used only for the Upload button) ---
 const QUESTIONS = [
     {
         id: 1,
@@ -59,46 +61,143 @@ const QUESTIONS = [
     },
 ];
 
+// --- 2. TYPES ---
+interface Option {
+    key: string;
+    label: string;
+}
+
+interface Question {
+    id: number;
+    question: string;
+    options: Option[];
+    correctKey: string;
+    math?: string;
+}
+
+// --- 3. MAIN COMPONENT ---
 export default function MCQPage() {
+    // Database and Score States
+    const [questions, setQuestions] = useState<Question[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [score, setScore] = useState(0);
+
+    // Quiz States
     const [currentIndex, setCurrentIndex] = useState(0);
     const [selected, setSelected] = useState<string | null>(null);
     const [isChecked, setIsChecked] = useState(false);
     const [isFinished, setIsFinished] = useState(false);
 
-    const currentQ = QUESTIONS[currentIndex];
+    // Fetch from Firebase
+    useEffect(() => {
+        const fetchQuestions = async () => {
+            try {
+                const docRef = doc(db, "questions", "reflection-of-light");
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    if (data.items) {
+                        setQuestions(data.items);
+                    }
+                } else {
+                    console.error("No questions document found in Firebase!");
+                }
+            } catch (error) {
+                console.error("Error fetching questions:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchQuestions();
+    }, []);
+
+    // Upload to Firebase Function
+    // const handleUploadData = async () => {
+    //     try {
+    //         await setDoc(doc(db, "questions", "reflection-of-light"), {
+    //             items: QUESTIONS
+    //         });
+    //         alert("✅ Database successfully created and populated!");
+    //         window.location.reload(); // Refresh the page to load the new data
+    //     } catch (error) {
+    //         console.error("Error uploading data:", error);
+    //         alert("❌ Error uploading data. Check console.");
+    //     }
+    // };
+
+    // --- RENDER LOADING OR EMPTY STATE ---
+    if (loading) {
+        return <main className="flex items-center justify-center min-h-screen text-xl font-bold">Loading lesson...</main>;
+    }
+
+    // if (questions.length === 0) {
+    //     return (
+    //         <main className="flex flex-col items-center justify-center min-h-screen text-xl font-bold gap-6">
+    //             <p className="text-red-500">No questions found in Firebase.</p>
+    //             {/* Temporary button to push data to Firebase */}
+    //             <button 
+    //                 onClick={handleUploadData}
+    //                 className="p-4 bg-blue-500 text-white font-bold rounded-xl"
+    //             >
+    //                 Push Data to Firebase
+    //             </button>
+    //         </main>
+    //     );
+    // }
+
+    // --- QUIZ LOGIC ---
+    const currentQ = questions[currentIndex];
     const isCorrect = selected === currentQ.correctKey;
 
     const handleContinue = () => {
         if (!isChecked) {
             setIsChecked(true);
+            if (isCorrect) {
+                setScore((prev) => prev + 1); // Increase score if correct
+            }
         } else {
-            if (currentIndex < QUESTIONS.length - 1) {
+            if (currentIndex < questions.length - 1) {
                 setCurrentIndex(currentIndex + 1);
                 setSelected(null);
                 setIsChecked(false);
             } else {
-                setIsFinished(true);
+                setIsFinished(true); // End of quiz
             }
         }
     };
 
+    // --- RENDER FINISHED STATE (PASS/FAIL) ---
     if (isFinished) {
+        const isPass = score > questions.length / 2;
+
         return (
             <main className="flex flex-col items-center justify-center min-h-screen text-center p-6">
-                <h1 className="text-4xl font-bold mb-4">Lesson Complete! 🏆</h1>
-                <p className="text-xl text-gray-400 mb-8">You've mastered the basics of Light Reflection.</p>
-                <Link href="/lessons/reflection-of-light" className="text-[#FFD700] underline">Back to Lesson</Link>
+                <h1 className="text-4xl font-bold mb-4">
+                    {isPass ? "Lesson Passed! 🏆" : "Keep Practicing! 💡"}
+                </h1>
+                <p className="text-xl text-gray-400 mb-2">
+                    You scored **{score}** out of **{questions.length}**.
+                </p>
+                <p className={`text-lg font-bold mb-8 ${isPass ? "text-green-500" : "text-red-500"}`}>
+                    Status: {isPass ? "PASS" : "FAIL"}
+                </p>
+                <Link href="/lessons/reflection-of-light" className="text-[#FFD700] underline hover:brightness-110">
+                    Back to Lesson
+                </Link>
             </main>
         );
     }
 
+    // --- RENDER ACTIVE QUIZ ---
     return (
         <main className="max-w-3xl mx-auto min-h-screen flex flex-col p-6 sm:p-10">
             {/* Progress Bar */}
             <div className="w-full bg-gray-800 h-3 rounded-full mb-12">
                 <div
                     className="bg-[#FFD700] h-full rounded-full transition-all duration-500"
-                    style={{ width: `${((currentIndex + 1) / QUESTIONS.length) * 100}%` }}
+                    style={{ width: `${((currentIndex + 1) / questions.length) * 100}%` }}
                 />
             </div>
 
@@ -111,7 +210,8 @@ export default function MCQPage() {
                 )}
 
                 <div className="space-y-4 mt-8">
-                    {currentQ.options.map((opt) => (
+                    {/* The ?.map fixes the "Cannot read properties of undefined" error */}
+                    {currentQ.options?.map((opt) => (
                         <button
                             key={opt.key}
                             disabled={isChecked}
@@ -133,7 +233,7 @@ export default function MCQPage() {
                 </div>
             </div>
 
-            {/* Duolingo Footer */}
+            {/* Footer */}
             <footer className={`fixed bottom-0 left-0 w-full p-6 border-t border-gray-800 transition-colors
         ${isChecked ? (isCorrect ? "bg-green-900/20" : "bg-red-900/20") : "bg-[#0a0a0a]"}
       `}>
