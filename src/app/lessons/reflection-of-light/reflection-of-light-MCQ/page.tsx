@@ -3,8 +3,8 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Math from "@/components/Math";
-import { doc, getDoc, setDoc } from "firebase/firestore";
-import { db } from "../../../../firebaseConfig"; // ⚠️ Adjust this path to your firebaseConfig if needed
+import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
+import { db, auth } from "../../../../firebaseConfig"; // ⚠️ Adjust this path to your firebaseConfig if needed
 
 // --- 1. THE HARDCODED DATA (Used only for the Upload button) ---
 const QUESTIONS = [
@@ -113,6 +113,42 @@ export default function MCQPage() {
         fetchQuestions();
     }, []);
 
+    // --- SAVE PROGRESS TO FIREBASE ---
+    useEffect(() => {
+        const saveProgress = async () => {
+            if (isFinished) {
+                // Get the currently logged-in user
+                const user = auth.currentUser;
+                
+                if (user) {
+                    const isPass = score > questions.length / 2;
+                    
+                    try {
+                        // Path: users -> [userId] -> lessonResults -> reflection-of-light
+                        const resultRef = doc(db, "users", user.uid, "lessonResults", "reflection-of-light");
+                        
+                        await setDoc(resultRef, {
+                            lessonId: "reflection-of-light",
+                            lessonName: "Reflection of Light",
+                            score: score,
+                            totalQuestions: questions.length,
+                            status: isPass ? "PASS" : "FAIL",
+                            completedAt: serverTimestamp() // Saves the exact date/time
+                        }, { merge: true }); // merge: true overwrites the score if they retake it
+                        
+                        console.log("✅ Progress successfully saved to dashboard!");
+                    } catch (error) {
+                        console.error("❌ Error saving progress:", error);
+                    }
+                } else {
+                    console.log("⚠️ No user is logged in. Progress will not be saved.");
+                }
+            }
+        };
+
+        saveProgress();
+    }, [isFinished, score, questions.length]);
+
     // Upload to Firebase Function
     // const handleUploadData = async () => {
     //     try {
@@ -167,6 +203,7 @@ export default function MCQPage() {
             }
         }
     };
+   
 
     // --- RENDER FINISHED STATE (PASS/FAIL) ---
     if (isFinished) {
@@ -178,7 +215,7 @@ export default function MCQPage() {
                     {isPass ? "Lesson Passed! 🏆" : "Keep Practicing! 💡"}
                 </h1>
                 <p className="text-xl text-gray-400 mb-2">
-                    You scored **{score}** out of **{questions.length}**.
+                    You scored {score} out of {questions.length}.
                 </p>
                 <p className={`text-lg font-bold mb-8 ${isPass ? "text-green-500" : "text-red-500"}`}>
                     Status: {isPass ? "PASS" : "FAIL"}
@@ -189,6 +226,7 @@ export default function MCQPage() {
             </main>
         );
     }
+    
 
     // --- RENDER ACTIVE QUIZ ---
     return (
