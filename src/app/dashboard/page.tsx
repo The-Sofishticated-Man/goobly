@@ -100,7 +100,7 @@ export default function DashboardPage() {
     return (
         <main className="max-w-4xl mx-auto min-h-screen flex flex-col p-6 sm:p-10">
             <header className="mb-10 border-b border-gray-800 pb-6">
-                <h1 className="text-4xl font-bold mb-2">My Dashboard</h1>
+                <h1 className="text-4xl font-bold mb-2 text-[var(--color-accent-3)]">My Dashboard</h1>
                 <p className="text-gray-400 text-lg">Track your progress and review your past lessons.</p>
             </header>
 

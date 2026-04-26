@@ -1,15 +1,17 @@
 "use client";
 
+import { useState } from "react"; // <-- NEW: Import useState
 import FlatMirrorReflectionPlayground from "@/components/FlatMirrorReflectionPlayground";
 import Math from "@/components/Math";
 import Divider from "@/components/Divider/Divider";
 import { PALETTE } from "@/lib/colors";
 import ConvexMirrorReflectionPlayground from "@/components/ConvexMirrorReflectionPlayground";
-import MCQuestion from "@/components/MCQuestion";
 import Link from "next/link";
-// Removed unused imports to keep it clean, add them back if you plan to use them!
 
 export default function ReflectionLesson() {
+  // --- NEW: State to control the wave from the main page ---
+  const [showWave, setShowWave] = useState(true);
+
   return (
     <main className="mx-auto space-y-8 sm:space-y-12 p-4 sm:p-6 md:p-8 lg:p-10 w-full max-w-full lg:max-w-6xl xl:max-w-7xl 2xl:max-w-[90%]">
       <div className="lesson-container mx-auto w-full">
@@ -45,9 +47,7 @@ export default function ReflectionLesson() {
         </p>
       </div>
 
-      {/* Added responsive Flexbox: columns on mobile, rows on medium screens+ */}
       <div className="flex flex-col lg:flex-row items-center justify-between gap-6 md:gap-8 mx-auto w-full">
-        {/* Text takes up half the width on desktop */}
         <div className="w-full lg:w-1/2 space-y-4 px-2 sm:px-4">
           <h3 className="text-(--color-accent-3) text-xl font-semibold">
             First Law of Reflection
@@ -86,7 +86,6 @@ export default function ReflectionLesson() {
           </ul>
         </div>
 
-        {/* Video takes up the other half */}
         <div className="w-full lg:w-1/2 overflow-hidden rounded-lg px-2 sm:px-4">
           <video
             src="/idklol.mp4"
@@ -142,14 +141,95 @@ export default function ReflectionLesson() {
             angle it came in, but on the opposite side of the normal.
             <br />
             This symmetry is why mirrors produce predictable images and why a
-            laser beam reflects so cleanly from a flat surface{" "}
+            laser beam reflects so cleanly from a flat surface.
           </p>
+          <h3 className="text-(--color-accent-3) text-xl font-semibold mt-6">
+            Computing Reflection (Vector Form)
+          </h3>
+          <p>
+            In modern physics simulations and video games (just like the playground here),
+            calculating angles can be slow. Instead, computers calculate reflection using
+            the <strong>Vector Reflection Formula</strong>. If we know the incoming light vector and the mirror's normal vector, we can perfectly calculate the outgoing ray:
+          </p>
+
+          <div className="text-2xl justify-center flex py-4">
+            <Math
+              math={String.raw`\textcolor{${PALETTE.accent3}}{\vec{r}} = \textcolor{${PALETTE.accent3}}{\vec{i}} - 2(\textcolor{${PALETTE.accent3}}{\vec{i}} \cdot \textcolor{${PALETTE.accent4}}{\hat{n}})\textcolor{${PALETTE.accent4}}{\hat{n}}`}
+            />
+          </div>
+
+          <ul className="list-disc list-inside space-y-2 mb-4">
+            <li>
+              <Math math={String.raw`\textcolor{${PALETTE.accent3}}{\vec{r}}`} /> : Reflected direction vector
+            </li>
+            <li>
+              <Math math={String.raw`\textcolor{${PALETTE.accent3}}{\vec{i}}`} /> : Incident direction vector
+            </li>
+            <li>
+              <Math math={String.raw`\textcolor{${PALETTE.accent4}}{\hat{n}}`} /> : Unit normal vector of the surface
+            </li>
+          </ul>
+
+        {/* Replace your current Wave Model section with this updated one */}
+          <h3 className="text-(--color-accent-3) text-xl font-semibold mt-8">
+            The Wave Model of Light
+          </h3>
+          <p>
+            Notice the pulsing animation in the interactive playground? While we
+            often draw light as straight geometrical "rays" to calculate angles
+            easily, light actually travels as an oscillating electromagnetic
+            wave. We can describe the displacement of this wave over time and distance using the standard wave equation:
+          </p>
+
+          <div className="text-2xl justify-center flex py-4">
+            <Math
+              math={String.raw`y(x, t) = A \sin(kx - \omega t)`}
+            />
+          </div>
+
+          <ul className="list-disc list-inside space-y-2 mb-4">
+            <li><strong>A</strong> : Amplitude (height of the wave)</li>
+            <li><strong>k</strong> : Wavenumber (how tight the peaks are)</li>
+            <li><strong>ω</strong> : Angular frequency (how fast it pulses over time)</li>
+          </ul>
+
+          <p>
+            When the wave hits the mirror, its continuous phase reflects
+            perfectly. Because it stays in the same medium (like air), its frequency and speed remain completely unchanged!
+          </p>
+          {/* --- NEW: Interactive Buttons on the Page --- */}
+          <div className="flex gap-4 mt-4">
+            <button
+              onClick={() => setShowWave(false)}
+              className={`px-6 py-2 text-sm font-bold uppercase tracking-wider rounded-xl shadow transition-all ${!showWave
+                  ? "bg-[#FFD700] text-black shadow-[0_4px_0_#b89b00] translate-y-0"
+                  : "bg-gray-200 text-gray-600 hover:bg-gray-300 shadow-[0_4px_0_#9ca3af]"
+                }`}
+            >
+              Ray Model
+            </button>
+            <button
+              onClick={() => setShowWave(true)}
+              className={`px-6 py-2 text-sm font-bold uppercase tracking-wider rounded-xl shadow transition-all ${showWave
+                  ? "bg-[#FFD700] text-black shadow-[0_4px_0_#b89b00] translate-y-0"
+                  : "bg-gray-200 text-gray-600 hover:bg-gray-300 shadow-[0_4px_0_#9ca3af]"
+                }`}
+            >
+              Wave Model
+            </button>
+          </div>
+          <p className="text-sm text-gray-500 italic mt-2">
+            Click the buttons above to toggle the view in the playground.
+          </p>
+
         </div>
         <div className="w-full lg:w-1/2 min-h-96 sm:min-h-[500px] flex items-center justify-center px-2 sm:px-4">
+          {/* --- NEW: Pass showWave as a prop --- */}
           <FlatMirrorReflectionPlayground
             width={500}
             height={800}
             module="ahhh"
+            showWave={showWave}
           />
         </div>
       </div>
