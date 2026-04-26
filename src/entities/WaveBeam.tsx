@@ -5,10 +5,12 @@ export default function WaveBeam({
   beam,
   hitDistance,
   time,
+  reflectedDirection: customReflectedDirection, // <-- NEW: Accept custom direction
 }: {
   beam: Ray | null;
   hitDistance: number | null;
   time: number;
+  reflectedDirection?: { x: number; y: number } | null; // <-- NEW
 }) {
   if (!beam) return null;
 
@@ -49,7 +51,9 @@ export default function WaveBeam({
       y: beam.origin.y + beam.direction.y * hitDistance,
     };
 
-    const reflectedDirection = {
+    // Use the custom direction if provided (for curved mirrors), 
+    // otherwise fallback to the flat vertical mirror math
+    const reflectedDirection = customReflectedDirection || {
       x: -beam.direction.x,
       y: beam.direction.y,
     };

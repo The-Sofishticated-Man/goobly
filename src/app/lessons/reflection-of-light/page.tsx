@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react"; // <-- NEW: Import useState
+import { useState } from "react";
 import FlatMirrorReflectionPlayground from "@/components/FlatMirrorReflectionPlayground";
 import Math from "@/components/Math";
 import Divider from "@/components/Divider/Divider";
@@ -9,7 +9,7 @@ import ConvexMirrorReflectionPlayground from "@/components/ConvexMirrorReflectio
 import Link from "next/link";
 
 export default function ReflectionLesson() {
-  // --- NEW: State to control the wave from the main page ---
+  // State to control the wave from the main page
   const [showWave, setShowWave] = useState(true);
 
   return (
@@ -100,6 +100,8 @@ export default function ReflectionLesson() {
         </div>
       </div>
       <Divider />
+
+      {/* FLAT MIRROR SECTION */}
       <div className="flex flex-col lg:flex-row justify-between gap-6 md:gap-8 mx-auto w-full">
         <div className="w-full lg:w-1/2 flex flex-col space-y-4 px-2 sm:px-4">
           <h2 className="text-2xl md:text-3xl font-bold">Light Reflection</h2>
@@ -170,7 +172,6 @@ export default function ReflectionLesson() {
             </li>
           </ul>
 
-        {/* Replace your current Wave Model section with this updated one */}
           <h3 className="text-(--color-accent-3) text-xl font-semibold mt-8">
             The Wave Model of Light
           </h3>
@@ -197,13 +198,14 @@ export default function ReflectionLesson() {
             When the wave hits the mirror, its continuous phase reflects
             perfectly. Because it stays in the same medium (like air), its frequency and speed remain completely unchanged!
           </p>
-          {/* --- NEW: Interactive Buttons on the Page --- */}
+
+          {/* Toggle Buttons */}
           <div className="flex gap-4 mt-4">
             <button
               onClick={() => setShowWave(false)}
               className={`px-6 py-2 text-sm font-bold uppercase tracking-wider rounded-xl shadow transition-all ${!showWave
-                  ? "bg-[#FFD700] text-black shadow-[0_4px_0_#b89b00] translate-y-0"
-                  : "bg-gray-200 text-gray-600 hover:bg-gray-300 shadow-[0_4px_0_#9ca3af]"
+                ? "bg-[#FFD700] text-black shadow-[0_4px_0_#b89b00] translate-y-0"
+                : "bg-gray-200 text-gray-600 hover:bg-gray-300 shadow-[0_4px_0_#9ca3af]"
                 }`}
             >
               Ray Model
@@ -211,8 +213,8 @@ export default function ReflectionLesson() {
             <button
               onClick={() => setShowWave(true)}
               className={`px-6 py-2 text-sm font-bold uppercase tracking-wider rounded-xl shadow transition-all ${showWave
-                  ? "bg-[#FFD700] text-black shadow-[0_4px_0_#b89b00] translate-y-0"
-                  : "bg-gray-200 text-gray-600 hover:bg-gray-300 shadow-[0_4px_0_#9ca3af]"
+                ? "bg-[#FFD700] text-black shadow-[0_4px_0_#b89b00] translate-y-0"
+                : "bg-gray-200 text-gray-600 hover:bg-gray-300 shadow-[0_4px_0_#9ca3af]"
                 }`}
             >
               Wave Model
@@ -224,7 +226,6 @@ export default function ReflectionLesson() {
 
         </div>
         <div className="w-full lg:w-1/2 min-h-96 sm:min-h-[500px] flex items-center justify-center px-2 sm:px-4">
-          {/* --- NEW: Pass showWave as a prop --- */}
           <FlatMirrorReflectionPlayground
             width={500}
             height={800}
@@ -233,24 +234,88 @@ export default function ReflectionLesson() {
           />
         </div>
       </div>
+
       <Divider />
-      <ConvexMirrorReflectionPlayground
-        width={800}
-        height={600}
-        module={"ahhh"}
-      />
-      <div className="w-full px-2 sm:px-4 mx-auto">
+
+      {/* --- NEW: CONVEX MIRROR SECTION --- */}
+      <div className="flex flex-col lg:flex-row justify-between gap-6 md:gap-8 mx-auto w-full">
+        {/* Text takes up half the width on desktop */}
+        <div className="w-full lg:w-1/2 flex flex-col space-y-4 px-2 sm:px-4">
+          <h2 className="text-2xl md:text-3xl font-bold">Curved Reflection</h2>
+          <h3 className="text-(--color-accent-3) text-xl font-semibold mt-2">
+            The Convex Mirror
+          </h3>
+          <p>
+            What happens when the mirror isn't flat? In a <strong>Convex Mirror</strong> (a surface that bulges outward towards the light source), the basic Law of Reflection still applies perfectly! However, the "normal" line is no longer pointing in just one uniform direction.
+          </p>
+          <p>
+            For a spherical curved mirror, the normal vector <Math math={String.raw`\textcolor{${PALETTE.accent4}}{\hat{n}}`} /> is found by drawing a straight line from the mirror's <strong>Center of Curvature (<Math math={String.raw`C`} />)</strong> to the exact point where the light hits the surface (<Math math={String.raw`P_{hit}`} />).
+          </p>
+
+          <div className="text-2xl justify-center flex py-4">
+            <Math
+              math={String.raw`\textcolor{${PALETTE.accent4}}{\hat{n}} = \frac{P_{hit} - C}{||P_{hit} - C||}`}
+            />
+          </div>
+
+          <p>
+            Because the normal line angles outward depending on where the ray strikes, incoming rays that are parallel to each other will bounce outward in wildly different directions. They <strong>diverge</strong>.
+            <br /><br />
+            This divergence is exactly why convex mirrors make objects appear smaller than they really are, but give you a much wider field of view—making them perfect for security mirrors in stores and the passenger-side mirrors on cars!
+          </p>
+
+          {/* Toggle Buttons Repeated for Convenience */}
+          <div className="flex gap-4 mt-6">
+            <button
+              onClick={() => setShowWave(false)}
+              className={`px-6 py-2 text-sm font-bold uppercase tracking-wider rounded-xl shadow transition-all ${!showWave
+                ? "bg-[#FFD700] text-black shadow-[0_4px_0_#b89b00] translate-y-0"
+                : "bg-gray-200 text-gray-600 hover:bg-gray-300 shadow-[0_4px_0_#9ca3af]"
+                }`}
+            >
+              Ray Model
+            </button>
+            <button
+              onClick={() => setShowWave(true)}
+              className={`px-6 py-2 text-sm font-bold uppercase tracking-wider rounded-xl shadow transition-all ${showWave
+                ? "bg-[#FFD700] text-black shadow-[0_4px_0_#b89b00] translate-y-0"
+                : "bg-gray-200 text-gray-600 hover:bg-gray-300 shadow-[0_4px_0_#9ca3af]"
+                }`}
+            >
+              Wave Model
+            </button>
+          </div>
+          <p className="text-sm text-gray-500 italic mt-2">
+            Try moving the laser up and down to see how the curved normal changes the reflection!
+          </p>
+        </div>
+        <div className="w-full lg:w-5/7 min-h-96 sm:min-h-[500px] flex items-center justify-center px-2 sm:px-4 ">
+          <ConvexMirrorReflectionPlayground
+            width={400} // I bumped this back up slightly to 400 so it doesn't squish too much, but adjust as needed!
+            height={600}
+            module={"ahhh"}
+            showWave={showWave}
+          />
+        </div>
+      </div>
+      {/* ------------------------------------- */}
+
+      <Divider />
+      <div className="w-full px-2 sm:px-4 mx-auto mt-12">
         <p className="max-w-full text-center">
-          Together, the two laws of reflection fully describe how light behaves
-          when it encounters a smooth surface. With only these simple rules, we
-          can accurately predict the direction of reflected rays and construct
-          precise optical models. In this Goobly Article, these laws are applied
-          in real time to trace light rays as they interact with reflective
-          surfaces, allowing users to visualize how geometry alone governs
-          reflection. This shows that even the most advanced optical systems are
-          built upon remarkably simple physical principles.
+          Together, the laws of reflection fully describe how light behaves
+          when it encounters any smooth surface—whether perfectly flat or curved. 
+          As we have seen, whether we model light as a simple geometric ray or an 
+          oscillating wave, these fundamental rules allow us to accurately predict 
+          the direction of reflected light and construct precise optical models. 
+          In this Goobly Article, these physical laws and vector mathematics are 
+          applied in real time to trace light paths as they interact with different 
+          reflective surfaces, allowing users to visualize how geometry and wave 
+          mechanics govern reflection. This shows that even the most advanced 
+          optical systems are built upon remarkably simple physical principles.
         </p>
       </div>
+      
       <div className="w-full flex justify-end pt-12 pb-8 px-2 sm:px-4">
         <Link
           href="/lessons/reflection-of-light/reflection-of-light-MCQ"
