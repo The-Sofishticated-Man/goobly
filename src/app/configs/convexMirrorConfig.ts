@@ -1,5 +1,5 @@
 export const CONVEX_MIRROR_LENGTH = 400;
 export const CONVEX_MIRROR_THICKNESS = 8;
-export const CONVEX_MIRROR_POSITION = { x: 320, y: 300 };
+export const CONVEX_MIRROR_POSITION = { x: 600, y: 300 };
 export const CONVEX_MIRROR_RADIUS = 300;
 export const CONVEX_MIRROR_POINT_COUNT = 40;

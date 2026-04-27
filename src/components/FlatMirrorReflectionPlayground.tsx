@@ -9,7 +9,7 @@ import {
   MIRROR_THICKNESS,
   MIRROR_POSITION,
   MIRROR_LENGTH,
-} from "@/app/configs/mirrorConfig";
+} from "@/app/configs/flatMirrorConfig";
 import { Ray } from "@/lib/types";
 import { raySegmentReflection } from "@/lib/physics";
 import { PALETTE } from "@/lib/colors";
@@ -29,18 +29,18 @@ const MIRROR_SEGMENT = {
   },
 };
 
+const INITIAL_LASER_ANGLE = -30;
+
 export default function FlatMirrorReflectionPlayground({
-  module,
   width,
   height,
   showWave = true,
 }: {
-  module: string;
   width?: number;
   height?: number;
   showWave?: boolean;
 }) {
-  const [containerSize, setContainerSize] = useState({
+  const [containerSize] = useState({
     width: width || 500,
     height: height || 400,
   });
@@ -50,7 +50,7 @@ export default function FlatMirrorReflectionPlayground({
   });
 
   const [time, setTime] = useState(0);
-  
+
   // --- NEW: State to track if the wave should be shown ---
   useEffect(() => {
     const handleResize = () => {
@@ -85,7 +85,7 @@ export default function FlatMirrorReflectionPlayground({
     x: responsiveWidth / 2,
     y: responsiveHeight / 2,
   });
-  const [laserRotation, setLaserRotation] = useState(10);
+  const [laserRotation, setLaserRotation] = useState(INITIAL_LASER_ANGLE);
   const [debug, setDebug] = useState(false);
   const [image] = useImage("/laserPointer.svg");
 
@@ -112,8 +112,17 @@ export default function FlatMirrorReflectionPlayground({
   return (
     <>
       {/* Updated UI Container to hold the checkbox and the new buttons */}
-      <div style={{ position: "absolute", top: 10, left: 10, zIndex: 10, display: "flex", flexDirection: "column", gap: "10px" }}>
-        
+      <div
+        style={{
+          position: "absolute",
+          top: 10,
+          left: 10,
+          zIndex: 10,
+          display: "flex",
+          flexDirection: "column",
+          gap: "10px",
+        }}
+      >
         <label className="text-xs sm:text-sm bg-white/50 p-1 rounded w-max">
           <input
             type="checkbox"
@@ -123,8 +132,6 @@ export default function FlatMirrorReflectionPlayground({
           />
           Debug Mode
         </label>
-
-
       </div>
 
       <div className="w-full h-full flex justify-center items-center">
@@ -140,7 +147,7 @@ export default function FlatMirrorReflectionPlayground({
               stroke={PALETTE.background}
             />
             <FlatMirror beam={beam} hitDistance={hitDistance} debug={debug} />
-            
+
             {/* The base Ray laser pointer */}
             <LaserPointer
               position={laserPosition}
@@ -149,12 +156,11 @@ export default function FlatMirrorReflectionPlayground({
               onPositionChange={setLaserPosition}
               onRotationChange={setLaserRotation}
             />
-            
+
             {/* --- NEW: Conditionally render the wave based on state --- */}
             {showWave && (
               <WaveBeam beam={beam} hitDistance={hitDistance} time={time} />
             )}
-
           </Layer>
         </Stage>
       </div>

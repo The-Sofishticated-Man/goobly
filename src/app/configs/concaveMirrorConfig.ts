@@ -1,0 +1,8 @@
+export const CONCAVE_MIRROR_LENGTH = 400;
+export const CONCAVE_MIRROR_RADIUS = 340;
+export const CONCAVE_MIRROR_THICKNESS = 8;
+export const CONCAVE_MIRROR_POINT_COUNT = 80;
+export const CONCAVE_MIRROR_POSITION = {
+  x: 600,
+  y: 300,
+};

@@ -15,6 +15,8 @@ import {
   MIRROR_LENGTH,
   MIRROR_THICKNESS,
   MIRROR_POSITION,
+} from "@/app/configs/flatMirrorConfig";
+import {
   MIRROR_FILL,
   MIRROR_STROKE,
   MIRROR_STROKE_WIDTH,
