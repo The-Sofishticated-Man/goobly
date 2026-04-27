@@ -1,9 +1,9 @@
-// components/Navbar.tsx
 "use client"; 
+
 import { useState, useEffect } from "react";
 import { Search } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link"; // For navigation
+import Link from "next/link"; 
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 import LoginButton from "./LoginButton";
@@ -11,8 +11,13 @@ import LoginModal from "./LoginModal";
 import SignupModal from "./SingupModal"; 
 
 export default function Navbar() {
+  // Authentication Modals State
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isSignupOpen, setIsSignupOpen] = useState(false);
+  
+  // Sidebar State
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const closeSidebar = () => setIsSidebarOpen(false);
   
   // Search State
   const [searchQuery, setSearchQuery] = useState("");
@@ -50,10 +55,10 @@ export default function Navbar() {
     setShowResults(true);
   }, [searchQuery, lessons]);
 
+  // Modal Handlers
   const handleOpenLogin = () => setIsLoginOpen(true);
   const handleCloseLogin = () => setIsLoginOpen(false);
   const handleCloseSignup = () => setIsSignupOpen(false);
-
   const handleSwitchToSignup = () => {
     setIsLoginOpen(false);
     setIsSignupOpen(true);
@@ -61,10 +66,27 @@ export default function Navbar() {
 
   return (
     <>
+      {/* --- TOP NAVIGATION BAR --- */}
       <nav className="glass sticky top-0 z-50 w-full flex flex-col sm:flex-row items-center sm:justify-between py-3 sm:py-6 px-3 sm:px-4 md:px-6 lg:px-8 gap-3 sm:gap-4 md:gap-6">
-        <Image src="/GooblyHeader.png" alt="Logo" width={100} height={200} className="h-8 sm:h-12 md:h-14 w-auto shrink-0" />
+        
+        {/* Left Side: Hamburger Menu + Logo */}
+        <div className="flex items-center gap-3 shrink-0 self-start sm:self-auto w-full sm:w-auto">
+          <button 
+            onClick={() => setIsSidebarOpen(true)}
+            className="p-2 -ml-2 text-(--color-text-soft) hover:text-(--color-text) transition-colors rounded-md hover:bg-white/5"
+          >
+            {/* Hamburger SVG */}
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+            </svg>
+          </button>
+          
+          <Link href="/">
+            <Image src="/GooblyHeader.png" alt="Logo" width={100} height={200} className="h-8 sm:h-12 md:h-14 w-auto" />
+          </Link>
+        </div>
 
-        {/* Updated Search Bar Container */}
+        {/* Middle: Search Bar */}
         <div className="relative w-full sm:flex-1 max-w-2xl flex flex-col items-center">
           <div className="flex items-center justify-between w-full h-10 sm:h-12 px-4 sm:px-6 bg-[rgb(var(--color-background-rgb))] border border-(--color-border-subtle) rounded-full shadow-[inset_0_1px_1px_rgba(var(--color-text-rgb),0.1)] ring-1 ring-black/50">
             <input 
@@ -99,14 +121,70 @@ export default function Navbar() {
           )}
         </div>
 
-        <div className="shrink-0 w-full sm:w-auto flex justify-end">
+        {/* Right Side: Login Button */}
+        <div className="shrink-0 hidden sm:flex justify-end">
           <LoginButton onClick={handleOpenLogin} disabled={false}>
             Login
           </LoginButton>
         </div>
       </nav>
 
-      {/* Modals */}
+      {/* --- SIDEBAR & OVERLAY --- */}
+      
+      {/* Dark Overlay (Click to close) */}
+      {isSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/60 z-[60] backdrop-blur-sm transition-opacity"
+          onClick={closeSidebar}
+        />
+      )}
+
+      {/* Slide-out Sidebar Menu */}
+      <aside 
+        className={`fixed top-0 left-0 h-full w-64 bg-[rgb(var(--color-background-rgb))] border-r border-(--color-border-subtle) z-[70] transform transition-transform duration-300 ease-in-out flex flex-col shadow-2xl
+        ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}`}
+      >
+        <div className="h-16 flex items-center justify-between px-4 border-b border-(--color-border-subtle)">
+          <span className="text-lg font-bold text-[var(--color-accent-3)]">Menu</span>
+          <button 
+            onClick={closeSidebar}
+            className="p-2 text-(--color-text-soft) hover:text-(--color-text) hover:bg-white/5 rounded-md transition-colors"
+          >
+            {/* Close 'X' SVG */}
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Sidebar Links */}
+        <div className="flex-col flex flex-grow p-4 gap-2">
+          <Link href="/" onClick={closeSidebar} className="p-3 rounded-lg hover:bg-white/5 transition-colors font-medium">
+            🏠 Home
+          </Link>
+          <Link href="/dashboard" onClick={closeSidebar} className="p-3 rounded-lg hover:bg-white/5 transition-colors font-medium">
+            📊 Dashboard
+          </Link>
+          <Link href="/lessons/reflection-of-light" onClick={closeSidebar} className="p-3 rounded-lg hover:bg-white/5 transition-colors font-medium">
+            💡 Lessons
+          </Link>
+        </div>
+
+        {/* Sidebar Footer (Mobile Login fallback) */}
+        <div className="p-4 border-t border-(--color-border-subtle) sm:hidden">
+           <button 
+             onClick={() => {
+               closeSidebar();
+               handleOpenLogin();
+             }}
+             className="w-full py-3 bg-[var(--color-accent-3)] text-black rounded-lg text-sm font-bold transition-colors"
+           >
+             Login
+           </button>
+        </div>
+      </aside>
+
+      {/* --- MODALS --- */}
       {isLoginOpen && <LoginModal onClose={handleCloseLogin} onSwitchToSignup={handleSwitchToSignup} />}
       {isSignupOpen && <SignupModal onClose={handleCloseSignup} />}
     </>

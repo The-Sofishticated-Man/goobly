@@ -22,7 +22,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={cascadia.variable}>
-      <body className={cascadia.className}>
+      <body className={cascadia.className} suppressHydrationWarning>
         <Navbar />
         {children}
       </body>
