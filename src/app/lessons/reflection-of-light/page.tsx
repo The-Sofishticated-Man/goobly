@@ -104,7 +104,9 @@ export default function ReflectionLesson() {
       {/* FLAT MIRROR SECTION */}
       <div className="flex flex-col lg:flex-row justify-between gap-6 md:gap-8 mx-auto w-full">
         <div className="w-full lg:w-1/2 flex flex-col space-y-4 px-2 sm:px-4">
-          <h2 className="text-2xl md:text-3xl font-bold">Light Reflection</h2>
+          <h2 className="text-2xl md:text-3xl font-bold text-(--color-accent-3)">
+            Light Reflection
+          </h2>
           <p>
             When a ray of light strikes a smooth surface, such as a mirror, it
             is reflected back into the same medium. This behavior follows a

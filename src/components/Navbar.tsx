@@ -1,19 +1,23 @@
 "use client"; 
 
 import { useState, useEffect } from "react";
-import { Search } from "lucide-react";
+import { Search, LogOut, User as UserIcon } from "lucide-react"; // Added icons
 import Image from "next/image";
 import Link from "next/link"; 
 import { collection, getDocs } from "firebase/firestore";
-import { db } from "../firebaseConfig";
+import { onAuthStateChanged, User } from "firebase/auth"; // Auth imports
+import { db, auth } from "../firebaseConfig";
 import LoginButton from "./LoginButton";
 import LoginModal from "./LoginModal";
 import SignupModal from "./SingupModal"; 
+import SignOutModal from "./SignOutModal"; // Import your new modal
 
 export default function Navbar() {
-  // Authentication Modals State
+  // Authentication State
+  const [user, setUser] = useState<User | null>(null);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isSignupOpen, setIsSignupOpen] = useState(false);
+  const [isSignOutOpen, setIsSignOutOpen] = useState(false);
   
   // Sidebar State
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -25,7 +29,15 @@ export default function Navbar() {
   const [filteredResults, setFilteredResults] = useState<any[]>([]);
   const [showResults, setShowResults] = useState(false);
 
-  // 1. Fetch all lessons from Firebase once when the Navbar loads
+  // 1. Listen for Auth Changes
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  // 2. Fetch lessons for search
   useEffect(() => {
     const fetchLessons = async () => {
       const querySnapshot = await getDocs(collection(db, "lessons"));
@@ -38,27 +50,22 @@ export default function Navbar() {
     fetchLessons();
   }, []);
 
-  // 2. Handle the searching logic
+  // 3. Search Logic
   useEffect(() => {
     if (searchQuery.trim() === "") {
       setFilteredResults([]);
       setShowResults(false);
       return;
     }
-
     const results = lessons.filter(lesson => 
       lesson.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       lesson.tags?.some((tag: string) => tag.toLowerCase().includes(searchQuery.toLowerCase()))
     );
-
     setFilteredResults(results);
     setShowResults(true);
   }, [searchQuery, lessons]);
 
   // Modal Handlers
-  const handleOpenLogin = () => setIsLoginOpen(true);
-  const handleCloseLogin = () => setIsLoginOpen(false);
-  const handleCloseSignup = () => setIsSignupOpen(false);
   const handleSwitchToSignup = () => {
     setIsLoginOpen(false);
     setIsSignupOpen(true);
@@ -75,7 +82,6 @@ export default function Navbar() {
             onClick={() => setIsSidebarOpen(true)}
             className="p-2 -ml-2 text-(--color-text-soft) hover:text-(--color-text) transition-colors rounded-md hover:bg-white/5"
           >
-            {/* Hamburger SVG */}
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
               <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
             </svg>
@@ -100,7 +106,6 @@ export default function Navbar() {
             <Search className="w-4 sm:w-5 h-4 sm:h-5 text-(--color-text-soft) shrink-0 ml-2" />
           </div>
 
-          {/* Search Results Dropdown */}
           {showResults && filteredResults.length > 0 && (
             <div className="absolute top-full mt-2 w-full bg-[rgb(var(--color-background-rgb))] border border-(--color-border-subtle) rounded-xl shadow-xl overflow-hidden z-[60]">
               {filteredResults.map((lesson) => (
@@ -108,10 +113,7 @@ export default function Navbar() {
                   key={lesson.id} 
                   href={lesson.path}
                   className="block p-4 hover:bg-white/5 transition-colors"
-                  onClick={() => {
-                    setShowResults(false);
-                    setSearchQuery("");
-                  }}
+                  onClick={() => { setShowResults(false); setSearchQuery(""); }}
                 >
                   <p className="font-bold text-sm text-[var(--color-accent-3)]">{lesson.title}</p>
                   <p className="text-xs text-gray-400 line-clamp-1">{lesson.description}</p>
@@ -121,72 +123,93 @@ export default function Navbar() {
           )}
         </div>
 
-        {/* Right Side: Login Button */}
-        <div className="shrink-0 hidden sm:flex justify-end">
-          <LoginButton onClick={handleOpenLogin} disabled={false}>
-            Login
-          </LoginButton>
+        {/* Right Side: Auth Button (Desktop) */}
+        <div className="shrink-0 hidden sm:flex justify-end min-w-[120px]">
+          {user ? (
+            <LoginButton 
+              onClick={() => setIsSignOutOpen(true)} 
+              disabled={false} 
+              className="bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white border border-red-500/20"
+            >
+              <div className="flex items-center gap-2">
+                <LogOut className="w-4 h-4" />
+                <span>Sign Out</span>
+              </div>
+            </LoginButton>
+          ) : (
+            <LoginButton onClick={() => setIsLoginOpen(true)} disabled={false}>
+              Login
+            </LoginButton>
+          )}
         </div>
       </nav>
 
-      {/* --- SIDEBAR & OVERLAY --- */}
-      
-      {/* Dark Overlay (Click to close) */}
+      {/* --- SIDEBAR --- */}
       {isSidebarOpen && (
-        <div 
-          className="fixed inset-0 bg-black/60 z-[60] backdrop-blur-sm transition-opacity"
-          onClick={closeSidebar}
-        />
+        <div className="fixed inset-0 bg-black/60 z-[60] backdrop-blur-sm" onClick={closeSidebar} />
       )}
 
-      {/* Slide-out Sidebar Menu */}
-      <aside 
-        className={`fixed top-0 left-0 h-full w-64 bg-[rgb(var(--color-background-rgb))] border-r border-(--color-border-subtle) z-[70] transform transition-transform duration-300 ease-in-out flex flex-col shadow-2xl
-        ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}`}
-      >
+      <aside className={`fixed top-0 left-0 h-full w-64 bg-[rgb(var(--color-background-rgb))] border-r border-(--color-border-subtle) z-[70] transform transition-transform duration-300 ease-in-out flex flex-col ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}`}>
         <div className="h-16 flex items-center justify-between px-4 border-b border-(--color-border-subtle)">
           <span className="text-lg font-bold text-[var(--color-accent-3)]">Menu</span>
-          <button 
-            onClick={closeSidebar}
-            className="p-2 text-(--color-text-soft) hover:text-(--color-text) hover:bg-white/5 rounded-md transition-colors"
-          >
-            {/* Close 'X' SVG */}
+          <button onClick={closeSidebar} className="p-2 text-(--color-text-soft) hover:text-(--color-text) hover:bg-white/5 rounded-md">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
 
-        {/* Sidebar Links */}
         <div className="flex-col flex flex-grow p-4 gap-2">
-          <Link href="/" onClick={closeSidebar} className="p-3 rounded-lg hover:bg-white/5 transition-colors font-medium">
-            🏠 Home
-          </Link>
-          <Link href="/dashboard" onClick={closeSidebar} className="p-3 rounded-lg hover:bg-white/5 transition-colors font-medium">
-            📊 Dashboard
-          </Link>
-          <Link href="/lessons/reflection-of-light" onClick={closeSidebar} className="p-3 rounded-lg hover:bg-white/5 transition-colors font-medium">
-            💡 Lessons
-          </Link>
+          {user && (
+            <div className="flex items-center gap-3 p-3 mb-2 rounded-lg bg-white/5 border border-white/10">
+              <div className="w-8 h-8 rounded-full bg-[var(--color-accent-3)] flex items-center justify-center text-black">
+                <UserIcon className="w-5 h-5" />
+              </div>
+              <span className="text-sm font-bold truncate">{user.displayName || "User"}</span>
+            </div>
+          )}
+          <Link href="/" onClick={closeSidebar} className="p-3 rounded-lg hover:bg-white/5 transition-colors font-medium">🏠 Home</Link>
+          <Link href="/dashboard" onClick={closeSidebar} className="p-3 rounded-lg hover:bg-white/5 transition-colors font-medium">📊 Dashboard</Link>
+          <Link href="/lessons/reflection-of-light" onClick={closeSidebar} className="p-3 rounded-lg hover:bg-white/5 transition-colors font-medium">💡 Lessons</Link>
         </div>
 
-        {/* Sidebar Footer (Mobile Login fallback) */}
+        {/* Sidebar Footer (Mobile Auth) */}
         <div className="p-4 border-t border-(--color-border-subtle) sm:hidden">
-           <button 
-             onClick={() => {
-               closeSidebar();
-               handleOpenLogin();
-             }}
-             className="w-full py-3 bg-[var(--color-accent-3)] text-black rounded-lg text-sm font-bold transition-colors"
-           >
-             Login
-           </button>
+            {user ? (
+              <button 
+                onClick={() => { closeSidebar(); setIsSignOutOpen(true); }}
+                className="w-full py-3 bg-red-500/20 text-red-500 border border-red-500/40 rounded-lg text-sm font-bold transition-colors"
+              >
+                Sign Out
+              </button>
+            ) : (
+              <button 
+                onClick={() => { closeSidebar(); setIsLoginOpen(true); }}
+                className="w-full py-3 bg-[var(--color-accent-3)] text-black rounded-lg text-sm font-bold transition-colors"
+              >
+                Login
+              </button>
+            )}
         </div>
       </aside>
 
       {/* --- MODALS --- */}
-      {isLoginOpen && <LoginModal onClose={handleCloseLogin} onSwitchToSignup={handleSwitchToSignup} />}
-      {isSignupOpen && <SignupModal onClose={handleCloseSignup} />}
+      {isLoginOpen && (
+        <LoginModal 
+          onClose={() => setIsLoginOpen(false)} 
+          onSwitchToSignup={handleSwitchToSignup} 
+        />
+      )}
+      {isSignupOpen && (
+        <SignupModal 
+          onClose={() => setIsSignupOpen(false)} 
+        />
+      )}
+      {isSignOutOpen && (
+        <SignOutModal 
+          onClose={() => setIsSignOutOpen(false)} 
+        />
+      )}
     </>
   );
 }
