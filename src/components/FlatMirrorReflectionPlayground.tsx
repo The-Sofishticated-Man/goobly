@@ -16,6 +16,7 @@ import { PALETTE } from "@/lib/colors";
 import { Layer, Rect, Stage } from "react-konva";
 import { useMemo, useState, useEffect } from "react";
 import { useImage } from "react-konva-utils";
+import WaveBeam from "@/entities/WaveBeam";
 
 const MIRROR_SEGMENT = {
   start: {
@@ -32,10 +33,12 @@ export default function FlatMirrorReflectionPlayground({
   module,
   width,
   height,
+  showWave = true,
 }: {
   module: string;
   width?: number;
   height?: number;
+  showWave?: boolean;
 }) {
   const [containerSize, setContainerSize] = useState({
     width: width || 500,
@@ -46,6 +49,9 @@ export default function FlatMirrorReflectionPlayground({
     height: typeof window !== "undefined" ? window.innerHeight : 768,
   });
 
+  const [time, setTime] = useState(0);
+  
+  // --- NEW: State to track if the wave should be shown ---
   useEffect(() => {
     const handleResize = () => {
       setWindowSize({ width: window.innerWidth, height: window.innerHeight });
@@ -55,7 +61,17 @@ export default function FlatMirrorReflectionPlayground({
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Calculate responsive dimensions
+  useEffect(() => {
+    let animationFrameId: number;
+    const animate = (timestamp: number) => {
+      setTime(timestamp / 1000);
+      animationFrameId = requestAnimationFrame(animate);
+    };
+    animationFrameId = requestAnimationFrame(animate);
+
+    return () => cancelAnimationFrame(animationFrameId);
+  }, []);
+
   const responsiveWidth = Math.min(
     containerSize.width,
     Math.max(250, windowSize.width * 0.9),
@@ -73,7 +89,6 @@ export default function FlatMirrorReflectionPlayground({
   const [debug, setDebug] = useState(false);
   const [image] = useImage("/laserPointer.svg");
 
-  // Compute beam synchronously — no useEffect delay
   const beam = useMemo<Ray | null>(() => {
     if (!image) return null;
     const beamStartX =
@@ -88,7 +103,6 @@ export default function FlatMirrorReflectionPlayground({
     };
   }, [laserPosition.x, laserPosition.y, laserRotation, image]);
 
-  // Compute intersection synchronously — same render frame
   const hitDistance = useMemo(() => {
     if (!beam) return null;
     const reflection = raySegmentReflection(beam, MIRROR_SEGMENT);
@@ -97,16 +111,22 @@ export default function FlatMirrorReflectionPlayground({
 
   return (
     <>
-      <div style={{ position: "absolute", top: 10, left: 10, zIndex: 10 }}>
-        <label className="text-xs sm:text-sm">
+      {/* Updated UI Container to hold the checkbox and the new buttons */}
+      <div style={{ position: "absolute", top: 10, left: 10, zIndex: 10, display: "flex", flexDirection: "column", gap: "10px" }}>
+        
+        <label className="text-xs sm:text-sm bg-white/50 p-1 rounded w-max">
           <input
             type="checkbox"
             checked={debug}
             onChange={(e) => setDebug(e.target.checked)}
+            className="mr-1"
           />
           Debug Mode
         </label>
+
+
       </div>
+
       <div className="w-full h-full flex justify-center items-center">
         <Stage
           width={responsiveWidth}
@@ -120,6 +140,8 @@ export default function FlatMirrorReflectionPlayground({
               stroke={PALETTE.background}
             />
             <FlatMirror beam={beam} hitDistance={hitDistance} debug={debug} />
+            
+            {/* The base Ray laser pointer */}
             <LaserPointer
               position={laserPosition}
               rotation={laserRotation}
@@ -127,6 +149,12 @@ export default function FlatMirrorReflectionPlayground({
               onPositionChange={setLaserPosition}
               onRotationChange={setLaserRotation}
             />
+            
+            {/* --- NEW: Conditionally render the wave based on state --- */}
+            {showWave && (
+              <WaveBeam beam={beam} hitDistance={hitDistance} time={time} />
+            )}
+
           </Layer>
         </Stage>
       </div>
