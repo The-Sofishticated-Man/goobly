@@ -12,7 +12,8 @@ import { Upload } from "lucide-react";
 const QUESTIONS = [
   {
     id: 1,
-    question: "If light hits a mirror at an incident angle of 40°, what is the reflected angle?",
+    question:
+      "If light hits a mirror at an incident angle of 40°, what is the reflected angle?",
     options: [
       { key: "A", label: "20°" },
       { key: "B", label: "40°" },
@@ -22,7 +23,8 @@ const QUESTIONS = [
   },
   {
     id: 2,
-    question: "The first law of Snell-Descartes implies that the incident ray and reflected ray are:",
+    question:
+      "The first law of Snell-Descartes implies that the incident ray and reflected ray are:",
     options: [
       { key: "A", label: "In different dimensions" },
       { key: "B", label: "Always parallel" },
@@ -43,7 +45,8 @@ const QUESTIONS = [
   },
   {
     id: 4,
-    question: "Which line is perpendicular to the reflective surface at the point of incidence?",
+    question:
+      "Which line is perpendicular to the reflective surface at the point of incidence?",
     options: [
       { key: "A", label: "The Tangent" },
       { key: "B", label: "The Normal" },
@@ -58,57 +61,6 @@ const QUESTIONS = [
       { key: "A", label: "Because they favor the left side" },
       { key: "B", label: "Because of perfectly symmetric reflection" },
       { key: "C", label: "Because they absorb all light" },
-    ],
-    correctKey: "B",
-  },
-  // --- NEW QUESTIONS BELOW ---
-  {
-    id: 6,
-    question: "What happens to parallel light rays when they reflect off a convex mirror?",
-    options: [
-      { key: "A", label: "They converge at the focal point" },
-      { key: "B", label: "They diverge outward" },
-      { key: "C", label: "They reflect back perfectly parallel" },
-    ],
-    correctKey: "B",
-  },
-  {
-    id: 7,
-    question: "For a concave mirror with a radius of curvature (R) of 10 cm, what is its focal length (f)?",
-    options: [
-      { key: "A", label: "5 cm" },
-      { key: "B", label: "10 cm" },
-      { key: "C", label: "20 cm" },
-    ],
-    correctKey: "A",
-  },
-  {
-    id: 8,
-    question: "According to the Mirror Equation, if the image distance (d_i) is negative, what type of image is formed?",
-    options: [
-      { key: "A", label: "A real image in front of the mirror" },
-      { key: "B", label: "A virtual image behind the mirror" },
-      { key: "C", label: "No image is formed" },
-    ],
-    correctKey: "B",
-  },
-  {
-    id: 9,
-    question: "Which type of mirror is commonly used in passenger-side car mirrors to provide a wider field of view?",
-    options: [
-      { key: "A", label: "Flat Mirror" },
-      { key: "B", label: "Concave Mirror" },
-      { key: "C", label: "Convex Mirror" },
-    ],
-    correctKey: "C",
-  },
-  {
-    id: 10,
-    question: "Why are concave mirrors used in telescopes and satellite dishes?",
-    options: [
-      { key: "A", label: "Because they diverge signals" },
-      { key: "B", label: "Because they converge incoming parallel rays to a focal point" },
-      { key: "C", label: "Because they make objects appear smaller" },
     ],
     correctKey: "B",
   },
@@ -178,16 +130,26 @@ export default function MCQPage() {
 
           try {
             // Path: users -> [userId] -> lessonResults -> reflection-of-light
-            const resultRef = doc(db, "users", user.uid, "lessonResults", "reflection-of-light");
+            const resultRef = doc(
+              db,
+              "users",
+              user.uid,
+              "lessonResults",
+              "reflection-of-light",
+            );
 
-            await setDoc(resultRef, {
-              lessonId: "reflection-of-light",
-              lessonName: "Reflection of Light",
-              score: score,
-              totalQuestions: questions.length,
-              status: isPass ? "PASS" : "FAIL",
-              completedAt: serverTimestamp() // Saves the exact date/time
-            }, { merge: true }); // merge: true overwrites the score if they retake it
+            await setDoc(
+              resultRef,
+              {
+                lessonId: "reflection-of-light",
+                lessonName: "Reflection of Light",
+                score: score,
+                totalQuestions: questions.length,
+                status: isPass ? "PASS" : "FAIL",
+                completedAt: serverTimestamp(), // Saves the exact date/time
+              },
+              { merge: true },
+            ); // merge: true overwrites the score if they retake it
 
             console.log("✅ Progress successfully saved to dashboard!");
           } catch (error) {
@@ -203,38 +165,42 @@ export default function MCQPage() {
   }, [isFinished, score, questions.length]);
 
   // Upload to Firebase Function
-  const handleUploadData = async () => {
-    try {
-      await setDoc(doc(db, "questions", "reflection-of-light"), {
-        items: QUESTIONS
-      });
-      alert("✅ Database successfully created and populated!");
-      window.location.reload(); // Refresh the page to load the new data
-    } catch (error) {
-      console.error("Error uploading data:", error);
-      alert("❌ Error uploading data. Check console.");
-    }
-  };
+  // const handleUploadData = async () => {
+  //     try {
+  //         await setDoc(doc(db, "questions", "reflection-of-light"), {
+  //             items: QUESTIONS
+  //         });
+  //         alert("✅ Database successfully created and populated!");
+  //         window.location.reload(); // Refresh the page to load the new data
+  //     } catch (error) {
+  //         console.error("Error uploading data:", error);
+  //         alert("❌ Error uploading data. Check console.");
+  //     }
+  // };
 
   // --- RENDER LOADING OR EMPTY STATE ---
   if (loading) {
-    return <main className="flex items-center justify-center min-h-screen text-xl font-bold">Loading lesson...</main>;
-  }
-
-  if (questions.length === 0) {
     return (
-      <main className="flex flex-col items-center justify-center min-h-screen text-xl font-bold gap-6">
-        <p className="text-red-500">No questions found in Firebase.</p>
-        {/* Temporary button to push data to Firebase */}
-        <button
-          onClick={handleUploadData}
-          className="p-4 bg-blue-500 text-white font-bold rounded-xl"
-        >
-          Push Data to Firebase
-        </button>
+      <main className="flex items-center justify-center min-h-screen text-xl font-bold">
+        Loading lesson...
       </main>
     );
   }
+
+  // if (questions.length === 0) {
+  //     return (
+  //         <main className="flex flex-col items-center justify-center min-h-screen text-xl font-bold gap-6">
+  //             <p className="text-red-500">No questions found in Firebase.</p>
+  //             {/* Temporary button to push data to Firebase */}
+  //             <button
+  //                 onClick={handleUploadData}
+  //                 className="p-4 bg-blue-500 text-white font-bold rounded-xl"
+  //             >
+  //                 Push Data to Firebase
+  //             </button>
+  //         </main>
+  //     );
+  // }
 
   // --- QUIZ LOGIC ---
   const currentQ = questions[currentIndex];
@@ -257,7 +223,6 @@ export default function MCQPage() {
     }
   };
 
-
   // --- RENDER FINISHED STATE (PASS/FAIL) ---
   if (isFinished) {
     const isPass = score > questions.length / 2;
@@ -270,16 +235,20 @@ export default function MCQPage() {
         <p className="text-xl text-gray-400 mb-2">
           You scored {score} out of {questions.length}.
         </p>
-        <p className={`text-lg font-bold mb-8 ${isPass ? "text-green-500" : "text-red-500"}`}>
+        <p
+          className={`text-lg font-bold mb-8 ${isPass ? "text-green-500" : "text-red-500"}`}
+        >
           Status: {isPass ? "PASS" : "FAIL"}
         </p>
-        <Link href="/lessons/reflection-of-light" className="text-[#FFD700] underline hover:brightness-110">
+        <Link
+          href="/lessons/reflection-of-light"
+          className="text-[#FFD700] underline hover:brightness-110"
+        >
           Back to Lesson
         </Link>
       </main>
     );
   }
-
 
   // --- RENDER ACTIVE QUIZ ---
   return (
@@ -313,9 +282,11 @@ export default function MCQPage() {
                 ${isChecked && selected === opt.key && !isCorrect ? "border-red-500 bg-red-500/10" : ""}
               `}
             >
-              <span className={`w-8 h-8 flex items-center justify-center rounded-lg border font-bold
+              <span
+                className={`w-8 h-8 flex items-center justify-center rounded-lg border font-bold
                 ${selected === opt.key ? "border-[#FFD700] text-[#FFD700]" : "border-gray-600 text-gray-500"}
-              `}>
+              `}
+              >
                 {opt.key}
               </span>
               {opt.label}
@@ -325,14 +296,20 @@ export default function MCQPage() {
       </div>
 
       {/* Footer */}
-      <footer className={`fixed bottom-0 left-0 w-full p-6 border-t border-gray-800 transition-colors
+      <footer
+        className={`fixed bottom-0 left-0 w-full p-6 border-t border-gray-800 transition-colors
         ${isChecked ? (isCorrect ? "bg-green-900/20" : "bg-red-900/20") : "bg-[#0a0a0a]"}
-      `}>
+      `}
+      >
         <div className="max-w-3xl mx-auto flex justify-between items-center">
           <div>
             {isChecked && (
-              <p className={`text-xl font-bold ${isCorrect ? "text-green-500" : "text-red-500"}`}>
-                {isCorrect ? "✔ Correct!" : `✖ Oops! The answer was ${currentQ.correctKey}`}
+              <p
+                className={`text-xl font-bold ${isCorrect ? "text-green-500" : "text-red-500"}`}
+              >
+                {isCorrect
+                  ? "✔ Correct!"
+                  : `✖ Oops! The answer was ${currentQ.correctKey}`}
               </p>
             )}
           </div>
@@ -340,9 +317,11 @@ export default function MCQPage() {
             onClick={handleContinue}
             disabled={!selected}
             className={`px-12 py-4 rounded-xl font-bold uppercase tracking-widest transition-all
-              ${selected
-                ? "bg-[#FFD700] text-black shadow-[0_4px_0_#b89b00] hover:brightness-110 active:shadow-none active:translate-y-1"
-                : "bg-gray-700 text-gray-500 cursor-not-allowed"}
+              ${
+                selected
+                  ? "bg-[#FFD700] text-black shadow-[0_4px_0_#b89b00] hover:brightness-110 active:shadow-none active:translate-y-1"
+                  : "bg-gray-700 text-gray-500 cursor-not-allowed"
+              }
             `}
           >
             {isChecked ? "Continue" : "Check"}

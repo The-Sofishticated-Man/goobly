@@ -1,9 +1,6 @@
 import { PALETTE } from "@/lib/colors";
 
 // Mirror surface
-export const MIRROR_LENGTH = 600;
-export const MIRROR_THICKNESS = 8;
-export const MIRROR_POSITION = { x: 400, y: 300 };
 export const MIRROR_FILL = "#c0c0c0";
 export const MIRROR_STROKE = "#808080";
 export const MIRROR_STROKE_WIDTH = 2;

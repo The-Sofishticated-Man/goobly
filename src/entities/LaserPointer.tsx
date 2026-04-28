@@ -16,12 +16,16 @@ import {
 } from "@/app/configs/beamConfig";
 import {
   LASER_BEAM_OFFSET,
+  LASER_INITIAL_ANGLE,
+  LASER_ROTATABLE,
   LASER_SIZE_MULTIPLIER,
 } from "@/app/configs/laserPointerConfig";
 
 interface LaserPointerProps {
   position: { x: number; y: number };
   rotation: number;
+  rotatable?: boolean;
+  initialAngle?: number;
   hitDistance?: number | null;
   onPositionChange: (pos: { x: number; y: number }) => void;
   onRotationChange: (rot: number) => void;
@@ -30,14 +34,23 @@ interface LaserPointerProps {
 export default function LaserPointer({
   position,
   rotation,
+  rotatable,
+  initialAngle,
   hitDistance,
   onPositionChange,
   onRotationChange,
 }: LaserPointerProps) {
   const [image] = useImage("/laserPointer.svg");
   const groupRef = useRef<Konva.Group>(null);
+  const isRotatable = rotatable ?? LASER_ROTATABLE;
+  const lockedAngle = initialAngle ?? LASER_INITIAL_ANGLE;
+  const effectiveRotation = isRotatable ? rotation : lockedAngle;
 
-  const { startRotation } = useRotation(groupRef, rotation, onRotationChange);
+  const { startRotation } = useRotation(
+    groupRef,
+    effectiveRotation,
+    isRotatable ? onRotationChange : undefined,
+  );
   const { handleDragMove, handleDragStart, handleDragEnd } = useSmoothPosition(
     position,
     onPositionChange,
@@ -66,7 +79,7 @@ export default function LaserPointer({
       ref={groupRef}
       x={position.x}
       y={position.y}
-      rotation={rotation}
+      rotation={effectiveRotation}
       draggable
       onDragStart={handleDragStart}
       onDragMove={handleDragMove}
@@ -132,26 +145,30 @@ export default function LaserPointer({
         onMouseLeave={(e) => setCursor(e, "default")}
       />
 
-      {/* Lollipop Stick */}
-      <Line
-        points={[-offsetX, 0, -offsetX - stickLength, 0]}
-        stroke="#7491FF"
-        strokeWidth={2}
-      />
+      {isRotatable && (
+        <>
+          {/* Lollipop Stick */}
+          <Line
+            points={[-offsetX, 0, -offsetX - stickLength, 0]}
+            stroke="#7491FF"
+            strokeWidth={2}
+          />
 
-      {/* Lollipop Handle */}
-      <Circle
-        x={-offsetX - stickLength}
-        y={0}
-        radius={8}
-        fill="#DAE2FF"
-        stroke="#7491FF"
-        strokeWidth={3}
-        onMouseEnter={(e) => setCursor(e, "grab")}
-        onMouseLeave={(e) => setCursor(e, "default")}
-        onMouseDown={startRotation}
-        onTouchStart={startRotation}
-      />
+          {/* Lollipop Handle */}
+          <Circle
+            x={-offsetX - stickLength}
+            y={0}
+            radius={8}
+            fill="#DAE2FF"
+            stroke="#7491FF"
+            strokeWidth={3}
+            onMouseEnter={(e) => setCursor(e, "grab")}
+            onMouseLeave={(e) => setCursor(e, "default")}
+            onMouseDown={startRotation}
+            onTouchStart={startRotation}
+          />
+        </>
+      )}
     </Group>
   );
 }

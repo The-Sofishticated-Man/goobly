@@ -3,42 +3,55 @@ import { useMemo, useState, useEffect } from "react";
 import { Layer, Rect, Stage } from "react-konva";
 import { useImage } from "react-konva-utils";
 import LaserPointer from "@/entities/LaserPointer";
-import ConvexMirror from "@/entities/ConvexMirror";
-import WaveBeam from "@/entities/WaveBeam";
+import ConcaveMirror from "@/entities/ConcaveMirror";
 import {
   LASER_SIZE_MULTIPLIER,
   LASER_BEAM_OFFSET,
+  LASER_INITIAL_ANGLE,
 } from "@/app/configs/laserPointerConfig";
 import {
-  CONVEX_MIRROR_LENGTH,
-  CONVEX_MIRROR_POSITION,
-  CONVEX_MIRROR_RADIUS,
-  CONVEX_MIRROR_THICKNESS,
-} from "@/app/configs/convexMirrorConfig";
+  CONCAVE_MIRROR_LENGTH,
+  CONCAVE_MIRROR_POSITION,
+  CONCAVE_MIRROR_RADIUS,
+  CONCAVE_MIRROR_THICKNESS,
+} from "@/app/configs/concaveMirrorConfig";
 import { rayCircleArcReflection } from "@/lib/physics";
 import { Ray } from "@/lib/types";
 
+// --- Arc geometry ---
+// For a concave mirror, the center of curvature sits BEHIND the reflective
+// surface (to the LEFT, toward the incoming light), so the normals point inward.
 const ARC_HALF_ANGLE = Math.asin(
-  CONVEX_MIRROR_LENGTH / (2 * CONVEX_MIRROR_RADIUS),
+  CONCAVE_MIRROR_LENGTH / (2 * CONCAVE_MIRROR_RADIUS),
 );
-const ARC_START_ANGLE = Math.PI - ARC_HALF_ANGLE;
-const ARC_END_ANGLE = Math.PI + ARC_HALF_ANGLE;
+const ARC_START_ANGLE = -ARC_HALF_ANGLE; // right-side arc, not left
+const ARC_END_ANGLE = ARC_HALF_ANGLE;
 
-const CONVEX_MIRROR_ARC = {
+// The center of curvature is offset LEFT from the mirror face,
+// placing it on the same side as the incoming laser.
+const CONCAVE_MIRROR_ARC = {
   center: {
     x:
-      CONVEX_MIRROR_POSITION.x +
-      (CONVEX_MIRROR_RADIUS - CONVEX_MIRROR_THICKNESS / 2),
-    y: CONVEX_MIRROR_POSITION.y,
+      CONCAVE_MIRROR_POSITION.x -
+      CONCAVE_MIRROR_RADIUS +
+      CONCAVE_MIRROR_THICKNESS / 2,
+    y: CONCAVE_MIRROR_POSITION.y,
   },
-  radius: CONVEX_MIRROR_RADIUS,
+  radius: CONCAVE_MIRROR_RADIUS,
   startAngle: ARC_START_ANGLE,
   endAngle: ARC_END_ANGLE,
 };
 
-const INITIAL_LASER_ANGLE = -30;
+// Focal point is at R/2 in front of the mirror surface
+const FOCAL_POINT = {
+  x:
+    CONCAVE_MIRROR_POSITION.x -
+    CONCAVE_MIRROR_RADIUS / 2 +
+    CONCAVE_MIRROR_THICKNESS / 2,
+  y: CONCAVE_MIRROR_POSITION.y,
+};
 
-export default function ConvexMirrorReflectionPlayground({
+export default function ConcaveMirrorReflectionPlayground({
   module,
   width,
   height,
@@ -50,54 +63,40 @@ export default function ConvexMirrorReflectionPlayground({
   showWave?: boolean;
 }) {
   void module;
+  void showWave;
 
   const [containerSize] = useState({
     width: width || 500,
     height: height || 400,
   });
+
   const [windowSize, setWindowSize] = useState({
     width: typeof window !== "undefined" ? window.innerWidth : 1024,
     height: typeof window !== "undefined" ? window.innerHeight : 768,
   });
 
-  const [time, setTime] = useState(0);
-
   useEffect(() => {
     const handleResize = () => {
       setWindowSize({ width: window.innerWidth, height: window.innerHeight });
     };
-
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  useEffect(() => {
-    let animationFrameId: number;
-    const animate = (timestamp: number) => {
-      setTime(timestamp / 1000);
-      animationFrameId = requestAnimationFrame(animate);
-    };
-    animationFrameId = requestAnimationFrame(animate);
-
-    return () => cancelAnimationFrame(animationFrameId);
-  }, []);
-
-  // Back to normal responsive width scaling
   const responsiveWidth = Math.min(
     containerSize.width,
     Math.max(250, windowSize.width * 0.9),
   );
-
   const responsiveHeight = Math.min(
     containerSize.height,
     Math.max(200, windowSize.height * 0.9),
   );
 
   const [laserPosition, setLaserPosition] = useState({
-    x: responsiveWidth / 4, // Tucked the laser slightly further left
+    x: responsiveWidth / 4,
     y: responsiveHeight / 2,
   });
-  const [laserRotation, setLaserRotation] = useState(INITIAL_LASER_ANGLE);
+  const [laserRotation, setLaserRotation] = useState(LASER_INITIAL_ANGLE);
   const [debug, setDebug] = useState(false);
   const [image] = useImage("/laserPointer.svg");
 
@@ -120,7 +119,7 @@ export default function ConvexMirrorReflectionPlayground({
   const hitInfo = useMemo(() => {
     if (!beam) return null;
 
-    const reflection = rayCircleArcReflection(beam, CONVEX_MIRROR_ARC);
+    const reflection = rayCircleArcReflection(beam, CONCAVE_MIRROR_ARC);
     const distance = reflection?.distance ?? null;
 
     let reflectedDirection = null;
@@ -128,8 +127,10 @@ export default function ConvexMirrorReflectionPlayground({
       const hitX = beam.origin.x + beam.direction.x * distance;
       const hitY = beam.origin.y + beam.direction.y * distance;
 
-      const nx = hitX - CONVEX_MIRROR_ARC.center.x;
-      const ny = hitY - CONVEX_MIRROR_ARC.center.y;
+      // For concave: normal points FROM the hit point TOWARD the center of
+      // curvature (inward), so we flip the direction vs. convex.
+      const nx = CONCAVE_MIRROR_ARC.center.x - hitX;
+      const ny = CONCAVE_MIRROR_ARC.center.y - hitY;
 
       const len = Math.sqrt(nx * nx + ny * ny);
       const nux = nx / len;
@@ -167,23 +168,21 @@ export default function ConvexMirrorReflectionPlayground({
               height={responsiveHeight}
               fill={"#262626"}
             />
-            <ConvexMirror beam={beam} hitDistance={hitDistance} debug={debug} />
+            {/* Pass focalPoint so ConcaveMirror can render the F marker */}
+            <ConcaveMirror
+              beam={beam}
+              hitDistance={hitDistance}
+              debug={debug}
+              focalPoint={FOCAL_POINT}
+            />
             <LaserPointer
               position={laserPosition}
               rotation={laserRotation}
+              rotatable={false}
               hitDistance={hitDistance}
               onPositionChange={setLaserPosition}
               onRotationChange={setLaserRotation}
             />
-
-            {showWave && (
-              <WaveBeam
-                beam={beam}
-                hitDistance={hitDistance}
-                time={time}
-                reflectedDirection={hitInfo?.reflectedDirection}
-              />
-            )}
           </Layer>
         </Stage>
       </div>
