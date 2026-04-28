@@ -1,15 +1,15 @@
-"use client"; 
+"use client";
 
 import { useState, useEffect } from "react";
 import { Search, LogOut, User as UserIcon } from "lucide-react"; // Added icons
 import Image from "next/image";
-import Link from "next/link"; 
+import Link from "next/link";
 import { collection, getDocs } from "firebase/firestore";
 import { onAuthStateChanged, User } from "firebase/auth"; // Auth imports
 import { db, auth } from "../firebaseConfig";
 import LoginButton from "./LoginButton";
 import LoginModal from "./LoginModal";
-import SignupModal from "./SingupModal"; 
+import SignupModal from "./SingupModal";
 import SignOutModal from "./SignOutModal"; // Import your new modal
 
 export default function Navbar() {
@@ -18,11 +18,11 @@ export default function Navbar() {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isSignupOpen, setIsSignupOpen] = useState(false);
   const [isSignOutOpen, setIsSignOutOpen] = useState(false);
-  
+
   // Sidebar State
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const closeSidebar = () => setIsSidebarOpen(false);
-  
+
   // Search State
   const [searchQuery, setSearchQuery] = useState("");
   const [lessons, setLessons] = useState<any[]>([]);
@@ -57,7 +57,7 @@ export default function Navbar() {
       setShowResults(false);
       return;
     }
-    const results = lessons.filter(lesson => 
+    const results = lessons.filter(lesson =>
       lesson.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       lesson.tags?.some((tag: string) => tag.toLowerCase().includes(searchQuery.toLowerCase()))
     );
@@ -75,10 +75,10 @@ export default function Navbar() {
     <>
       {/* --- TOP NAVIGATION BAR --- */}
       <nav className="glass sticky top-0 z-50 w-full flex flex-col sm:flex-row items-center sm:justify-between py-3 sm:py-6 px-3 sm:px-4 md:px-6 lg:px-8 gap-3 sm:gap-4 md:gap-6">
-        
+
         {/* Left Side: Hamburger Menu + Logo */}
         <div className="flex items-center gap-3 shrink-0 self-start sm:self-auto w-full sm:w-auto">
-          <button 
+          <button
             onClick={() => setIsSidebarOpen(true)}
             className="p-2 -ml-2 text-(--color-text-soft) hover:text-(--color-text) transition-colors rounded-md hover:bg-white/5"
           >
@@ -86,7 +86,7 @@ export default function Navbar() {
               <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
             </svg>
           </button>
-          
+
           <Link href="/">
             <Image src="/GooblyHeader.png" alt="Logo" width={100} height={200} className="h-8 sm:h-12 md:h-14 w-auto" />
           </Link>
@@ -95,7 +95,7 @@ export default function Navbar() {
         {/* Middle: Search Bar */}
         <div className="relative w-full sm:flex-1 max-w-2xl flex flex-col items-center">
           <div className="flex items-center justify-between w-full h-10 sm:h-12 px-4 sm:px-6 bg-[rgb(var(--color-background-rgb))] border border-(--color-border-subtle) rounded-full shadow-[inset_0_1px_1px_rgba(var(--color-text-rgb),0.1)] ring-1 ring-black/50">
-            <input 
+            <input
               type="text"
               placeholder="Search Course/Simulation..."
               className="bg-transparent border-none outline-none w-full text-xs sm:text-sm font-mono tracking-wide text-(--color-text-rgb)"
@@ -109,8 +109,8 @@ export default function Navbar() {
           {showResults && filteredResults.length > 0 && (
             <div className="absolute top-full mt-2 w-full bg-[rgb(var(--color-background-rgb))] border border-(--color-border-subtle) rounded-xl shadow-xl overflow-hidden z-[60]">
               {filteredResults.map((lesson) => (
-                <Link 
-                  key={lesson.id} 
+                <Link
+                  key={lesson.id}
                   href={lesson.path}
                   className="block p-4 hover:bg-white/5 transition-colors"
                   onClick={() => { setShowResults(false); setSearchQuery(""); }}
@@ -126,9 +126,9 @@ export default function Navbar() {
         {/* Right Side: Auth Button (Desktop) */}
         <div className="shrink-0 hidden sm:flex justify-end min-w-[120px]">
           {user ? (
-            <LoginButton 
-              onClick={() => setIsSignOutOpen(true)} 
-              disabled={false} 
+            <LoginButton
+              onClick={() => setIsSignOutOpen(true)}
+              disabled={false}
               className="bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white border border-red-500/20"
             >
               <div className="flex items-center gap-2">
@@ -170,44 +170,44 @@ export default function Navbar() {
           )}
           <Link href="/" onClick={closeSidebar} className="p-3 rounded-lg hover:bg-white/5 transition-colors font-medium">🏠 Home</Link>
           <Link href="/dashboard" onClick={closeSidebar} className="p-3 rounded-lg hover:bg-white/5 transition-colors font-medium">📊 Dashboard</Link>
-          <Link href="/lessons/reflection-of-light" onClick={closeSidebar} className="p-3 rounded-lg hover:bg-white/5 transition-colors font-medium">💡 Lessons</Link>
+          <Link href="/lessons" onClick={closeSidebar} className="p-3 rounded-lg hover:bg-white/5 transition-colors font-medium">💡 Lessons</Link>
         </div>
 
         {/* Sidebar Footer (Mobile Auth) */}
         <div className="p-4 border-t border-(--color-border-subtle) sm:hidden">
-            {user ? (
-              <button 
-                onClick={() => { closeSidebar(); setIsSignOutOpen(true); }}
-                className="w-full py-3 bg-red-500/20 text-red-500 border border-red-500/40 rounded-lg text-sm font-bold transition-colors"
-              >
-                Sign Out
-              </button>
-            ) : (
-              <button 
-                onClick={() => { closeSidebar(); setIsLoginOpen(true); }}
-                className="w-full py-3 bg-[var(--color-accent-3)] text-black rounded-lg text-sm font-bold transition-colors"
-              >
-                Login
-              </button>
-            )}
+          {user ? (
+            <button
+              onClick={() => { closeSidebar(); setIsSignOutOpen(true); }}
+              className="w-full py-3 bg-red-500/20 text-red-500 border border-red-500/40 rounded-lg text-sm font-bold transition-colors"
+            >
+              Sign Out
+            </button>
+          ) : (
+            <button
+              onClick={() => { closeSidebar(); setIsLoginOpen(true); }}
+              className="w-full py-3 bg-[var(--color-accent-3)] text-black rounded-lg text-sm font-bold transition-colors"
+            >
+              Login
+            </button>
+          )}
         </div>
       </aside>
 
       {/* --- MODALS --- */}
       {isLoginOpen && (
-        <LoginModal 
-          onClose={() => setIsLoginOpen(false)} 
-          onSwitchToSignup={handleSwitchToSignup} 
+        <LoginModal
+          onClose={() => setIsLoginOpen(false)}
+          onSwitchToSignup={handleSwitchToSignup}
         />
       )}
       {isSignupOpen && (
-        <SignupModal 
-          onClose={() => setIsSignupOpen(false)} 
+        <SignupModal
+          onClose={() => setIsSignupOpen(false)}
         />
       )}
       {isSignOutOpen && (
-        <SignOutModal 
-          onClose={() => setIsSignOutOpen(false)} 
+        <SignOutModal
+          onClose={() => setIsSignOutOpen(false)}
         />
       )}
     </>
