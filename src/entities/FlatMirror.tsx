@@ -1,6 +1,7 @@
 import React from "react";
 import { Group, Line, Rect, Circle, Arc, Text } from "react-konva";
 import { Ray } from "@/lib/types";
+import { computeArc } from "@/lib/angles";
 import { raySegmentReflection } from "@/lib/physics";
 import {
   BEAM_LENGTH,
@@ -265,26 +266,6 @@ function AngleAnnotation({
       />
     </Group>
   );
-}
-
-/**
- * Compute arc start angle and sweep for Konva's Arc component.
- * Goes from angleA to angleB, taking the shorter path.
- */
-function computeArc(
-  angleA: number,
-  angleB: number,
-): { start: number; sweep: number } {
-  let sweep = angleB - angleA;
-  // Normalize to [-180, 180]
-  while (sweep > 180) sweep -= 360;
-  while (sweep < -180) sweep += 360;
-
-  if (sweep >= 0) {
-    return { start: angleA, sweep };
-  } else {
-    return { start: angleA + sweep, sweep: -sweep };
-  }
 }
 
 function ReflectedBeam({

@@ -1,6 +1,7 @@
 import React from "react";
 import { Group, Line, Circle, Text, Arc } from "react-konva";
 import { Ray } from "@/lib/types";
+import { computeArc } from "@/lib/angles";
 import { rayCircleArcReflection } from "@/lib/physics";
 import {
   BEAM_LENGTH,
@@ -394,17 +395,6 @@ function AngleAnnotation({
       />
     </Group>
   );
-}
-
-function computeArc(
-  angleA: number,
-  angleB: number,
-): { start: number; sweep: number } {
-  let sweep = angleB - angleA;
-  while (sweep > 180) sweep -= 360;
-  while (sweep < -180) sweep += 360;
-  if (sweep >= 0) return { start: angleA, sweep };
-  return { start: angleA + sweep, sweep: -sweep };
 }
 
 function ReflectedBeam({
