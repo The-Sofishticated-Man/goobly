@@ -5,4 +5,6 @@ export const PALETTE = {
   accent2: "#BE9AD2",
   accent3: "#F5CE5C",
   accent4: "#F35F5F",
+  accent5: "#7491FF",
+  accent6: "#E8A06A",
 } as const;
