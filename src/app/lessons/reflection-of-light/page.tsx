@@ -21,7 +21,6 @@ import ConcaveMirrorReflectionPlayground from "@/components/ConcaveMirrorReflect
 //
 // NOTE: accent6 does NOT exist in PALETTE — we use accent5 for ω and C instead.
 
-const C_ORANGE = "#e8a06a"; // one-off for ω / Center of Curvature — defined inline, not from PALETTE
 
 /** Inline coloured + semibold span */
 const T = ({
@@ -82,24 +81,25 @@ export default function ReflectionLesson() {
       {/* ══════════════════════════════════════════════════════════════════════
           HERO — fully centred
       ══════════════════════════════════════════════════════════════════════ */}
-      <section className="mb-20 sm:mb-28 text-center">
-        <p
-          className="text-xs font-bold uppercase tracking-[0.25em] mb-3"
-          style={{ color: PALETTE.accent3 }}
-        >
-          Geometrical Optics · Module 1
-        </p>
-        <h1 className="text-5xl sm:text-6xl font-black uppercase leading-none mb-3">
-          Light Reflection
-        </h1>
-        <h2
-          className="text-2xl sm:text-3xl font-light capitalize mb-12"
-          style={{ color: "rgba(255,255,255,0.55)" }}
-        >
-          Reflection on a Plane Mirror
-        </h2>
+      <section className="mb-20 sm:mb-28 ">
+        <div className="text-center">
+          <p
+            className="text-xs font-bold uppercase tracking-[0.25em] mb-3"
+            style={{ color: PALETTE.accent3 }}
+          >
+            Physics · Module 1
+          </p>
+          <h1 className="text-5xl sm:text-6xl font-black uppercase leading-none mb-3">
+            Light Reflection
+          </h1>
+          <h2
+            className="text-2xl sm:text-3xl font-light capitalize mb-12"
+            style={{ color: "rgba(255,255,255,0.55)" }}
+          >
+            Reflection on a Plane Mirror
+          </h2>
+        </div>
 
-        {/* Intro paragraphs — centred with a consistent max width */}
         <div className="max-w-3xl mx-auto space-y-5">
           <p className="leading-relaxed" style={{ color: "rgba(255,255,255,0.8)" }}>
             Light reflection is a basic yet fascinating concept in Geometrical
@@ -290,14 +290,14 @@ export default function ReflectionLesson() {
             <EqCard>
               <div className="flex justify-center py-1 text-2xl">
                 <Math
-                  math={String.raw`y(x, t) = \textcolor{${PALETTE.accent1}}{A} \sin(\textcolor{${PALETTE.accent3}}{k}x - \textcolor{${C_ORANGE}}{\omega} t)`}
+                  math={String.raw`y(x, t) = \textcolor{${PALETTE.accent1}}{A} \sin(\textcolor{${PALETTE.accent4}}{k}x - \textcolor{${PALETTE.accent6}}{\omega} t)`}
                 />
               </div>
               <Legend
                 items={[
                   { color: PALETTE.accent1, math: "A",        label: "Amplitude — height of the wave" },
-                  { color: PALETTE.accent3, math: "k",        label: "Wavenumber — how tight the peaks are" },
-                  { color: C_ORANGE,        math: "\\omega",  label: "Angular frequency — how fast it pulses" },
+                  { color: PALETTE.accent4, math: "k",        label: "Wavenumber — how tight the peaks are" },
+                  { color: PALETTE.accent6,        math: "\\omega",  label: "Angular frequency — how fast it pulses" },
                 ]}
               />
             </EqCard>
@@ -305,7 +305,7 @@ export default function ReflectionLesson() {
             <p className="leading-relaxed" style={{ color: "rgba(255,255,255,0.8)" }}>
               When the wave hits the mirror, its continuous phase reflects
               perfectly. Because it stays in the same medium (like air), its{" "}
-              <T color={C_ORANGE}>angular frequency</T> and speed remain
+              <T color={PALETTE.accent6}>angular frequency</T> and speed remain
               completely unchanged.
             </p>
           </div>
@@ -385,7 +385,7 @@ export default function ReflectionLesson() {
               For a spherical curved mirror, the{" "}
               <T color={PALETTE.accent4}>normal vector</T> is found by drawing a
               straight line from the mirror&apos;s{" "}
-              <T color={C_ORANGE}>Center of Curvature C</T> to the exact point
+              <T color={PALETTE.accent6}>Center of Curvature C</T> to the exact point
               where the light hits the surface,{" "}
               <T color={PALETTE.accent1}>P<sub>hit</sub></T>:
             </p>
@@ -393,14 +393,14 @@ export default function ReflectionLesson() {
             <EqCard>
               <div className="flex justify-center py-1 text-2xl">
                 <Math
-                  math={String.raw`\textcolor{${PALETTE.accent4}}{\hat{n}} = \frac{\textcolor{${PALETTE.accent1}}{P_{hit}} - \textcolor{${C_ORANGE}}{C}}{||\textcolor{${PALETTE.accent1}}{P_{hit}} - \textcolor{${C_ORANGE}}{C}||}`}
+                  math={String.raw`\textcolor{${PALETTE.accent4}}{\hat{n}} = \frac{\textcolor{${PALETTE.accent1}}{P_{hit}} - \textcolor{${PALETTE.accent6}}{C}}{||\textcolor{${PALETTE.accent1}}{P_{hit}} - \textcolor{${PALETTE.accent6}}{C}||}`}
                 />
               </div>
               <Legend
                 items={[
                   { color: PALETTE.accent4, math: "\\hat{n}", label: "Normal vector at the hit point" },
                   { color: PALETTE.accent1, math: "P_{hit}",  label: "Point where the ray hits the surface" },
-                  { color: C_ORANGE,        math: "C",        label: "Center of Curvature" },
+                  { color: PALETTE.accent6,        math: "C",        label: "Center of Curvature" },
                 ]}
               />
             </EqCard>
