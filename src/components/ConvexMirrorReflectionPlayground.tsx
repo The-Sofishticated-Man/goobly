@@ -36,7 +36,7 @@ const CONVEX_MIRROR_ARC = {
   endAngle: ARC_END_ANGLE,
 };
 
-const INITIAL_LASER_ANGLE = -30;
+const INITIAL_LASER_ANGLE = -20;
 
 export default function ConvexMirrorReflectionPlayground({
   module,
@@ -95,7 +95,7 @@ export default function ConvexMirrorReflectionPlayground({
 
   const [laserPosition, setLaserPosition] = useState({
     x: responsiveWidth / 4, // Tucked the laser slightly further left
-    y: responsiveHeight / 2,
+    y: responsiveHeight / 1.5,
   });
   const [laserRotation, setLaserRotation] = useState(INITIAL_LASER_ANGLE);
   const [debug, setDebug] = useState(false);
