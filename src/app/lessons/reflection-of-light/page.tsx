@@ -8,7 +8,6 @@ import { PALETTE } from "@/lib/colors";
 import ConvexMirrorReflectionPlayground from "@/components/ConvexMirrorReflectionPlayground";
 import Link from "next/link";
 import ConcaveMirrorReflectionPlayground from "@/components/ConcaveMirrorReflectionPlayground";
-import { PALETTE } from "@/lib/colors";
 
 // ─── Colour constants ────────────────────────────────────────────────────────
 // Each physical concept gets exactly ONE colour throughout the page.
