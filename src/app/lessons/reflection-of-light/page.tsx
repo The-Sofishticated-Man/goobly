@@ -10,6 +10,20 @@ import Link from "next/link";
 import ConcaveMirrorReflectionPlayground from "@/components/ConcaveMirrorReflectionPlayground";
 import { PALETTE } from "@/lib/colors";
 
+// ─── Colour constants ────────────────────────────────────────────────────────
+// Each physical concept gets exactly ONE colour throughout the page.
+// We only use the five accent colours that exist in PALETTE.
+//
+//  PALETTE.accent1  #a0e8a9  green   – incident ray î / incident angle θᵢ / amplitude A / P_hit
+//  PALETTE.accent2  #be9ad2  purple  – reflected angle θᵣₑ / focal length f
+//  PALETTE.accent3  #f5ce5c  yellow  – headings / object distance dₒ / wavenumber k
+//  PALETTE.accent4  #f35f5f  red     – normal vector n̂
+//  PALETTE.accent5  #7491ff  blue    – reflected ray r̂ / radius R / image distance dᵢ / Center C / ω
+//
+// NOTE: accent6 does NOT exist in PALETTE — we use accent5 for ω and C instead.
+
+const C_ORANGE = "#e8a06a"; // one-off for ω / Center of Curvature — defined inline, not from PALETTE
+
 /** Inline coloured + semibold span */
 const T = ({
   color,
@@ -29,10 +43,7 @@ const Legend = ({
 }: {
   items: { color: string; math: string; label: string }[];
 }) => (
-  <ul
-    className="mt-5 space-y-2 text-sm"
-    style={{ color: "var(--color-text-subtle)" }}
-  >
+  <ul className="mt-5 space-y-2 text-sm" style={{ color: "rgba(255,255,255,0.7)" }}>
     {items.map(({ color, math, label }) => (
       <li key={label} className="flex items-center gap-2.5">
         <span
@@ -53,8 +64,8 @@ const EqCard = ({ children }: { children: React.ReactNode }) => (
   <div
     className="rounded-2xl px-6 py-5"
     style={{
-      background: "var(--color-surface-weak)",
-      border: "1px solid var(--color-border-strong)",
+      background: "rgba(255,255,255,0.04)",
+      border: "1px solid rgba(255,255,255,0.08)",
     }}
   >
     {children}
@@ -70,10 +81,9 @@ export default function ReflectionLesson() {
       style={{ padding: "clamp(1.25rem, 4vw, 2.5rem)" }}
     >
       {/* ══════════════════════════════════════════════════════════════════════
-          HERO
+          HERO — fully centred
       ══════════════════════════════════════════════════════════════════════ */}
-      <section className="mb-20 sm:mb-28">
-        {/* Left-aligned title block */}
+      <section className="mb-20 sm:mb-28 text-center">
         <p
           className="text-xs font-bold uppercase tracking-[0.25em] mb-3"
           style={{ color: PALETTE.accent3 }}
@@ -85,17 +95,14 @@ export default function ReflectionLesson() {
         </h1>
         <h2
           className="text-2xl sm:text-3xl font-light capitalize mb-12"
-          style={{ color: "var(--color-text-dim)" }}
+          style={{ color: "rgba(255,255,255,0.55)" }}
         >
           Reflection on a Plane Mirror
         </h2>
 
-        {/* Centred intro paragraphs */}
-        <div className="max-w-3xl mx-auto text-center space-y-5">
-          <p
-            className="leading-relaxed"
-            style={{ color: "var(--color-text-soft)" }}
-          >
+        {/* Intro paragraphs — centred with a consistent max width */}
+        <div className="max-w-3xl mx-auto space-y-5">
+          <p className="leading-relaxed" style={{ color: "rgba(255,255,255,0.8)" }}>
             Light reflection is a basic yet fascinating concept in Geometrical
             Optics. It shows how light bounces off surfaces like mirrors or
             metals, following simple laws we can see in everyday life. Despite
@@ -103,10 +110,7 @@ export default function ReflectionLesson() {
             with its surroundings and how images are formed. From a calm lake to
             a laser hitting a mirror, it&apos;s all governed by the same rules.
           </p>
-          <p
-            className="leading-relaxed"
-            style={{ color: "var(--color-text-soft)" }}
-          >
+          <p className="leading-relaxed" style={{ color: "rgba(255,255,255,0.8)" }}>
             Even with modern advances like lasers, fiber optics, and holography,
             reflection remains central. It&apos;s used in telescopes, cameras,
             and many optical instruments. Understanding it isn&apos;t just about
@@ -133,26 +137,17 @@ export default function ReflectionLesson() {
         <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
           {/* Text */}
           <div className="w-full lg:w-1/2 space-y-6">
-            <p
-              className="leading-relaxed"
-              style={{ color: "var(--color-text-soft)" }}
-            >
-              When light strikes a reflective surface, its behaviour is
-              described by the Two Laws of Reflection, also known as the first
-              and second laws of Snell-Descartes.
+            <p className="leading-relaxed" style={{ color: "rgba(255,255,255,0.8)" }}>
+              When light strikes a reflective surface, its behaviour is described
+              by the Two Laws of Reflection, also known as the first and second
+              laws of Snell-Descartes.
             </p>
 
             <EqCard>
-              <h4
-                className="font-semibold text-lg mb-4"
-                style={{ color: PALETTE.accent3 }}
-              >
+              <h4 className="font-semibold text-lg mb-4" style={{ color: PALETTE.accent3 }}>
                 First Law of Reflection
               </h4>
-              <p
-                className="leading-relaxed mb-5"
-                style={{ color: "var(--color-text-soft)" }}
-              >
+              <p className="leading-relaxed mb-5" style={{ color: "rgba(255,255,255,0.8)" }}>
                 The <T color={PALETTE.accent1}>incident ray</T>,{" "}
                 <T color={PALETTE.accent5}>reflected ray</T>, and the{" "}
                 <T color={PALETTE.accent4}>normal</T> to the surface at the
@@ -168,21 +163,9 @@ export default function ReflectionLesson() {
 
               <Legend
                 items={[
-                  {
-                    color: PALETTE.accent4,
-                    math: "\\vec{n}",
-                    label: "Normal vector",
-                  },
-                  {
-                    color: PALETTE.accent1,
-                    math: "\\vec{i}",
-                    label: "Incident ray",
-                  },
-                  {
-                    color: PALETTE.accent5,
-                    math: "\\vec{r}",
-                    label: "Reflected ray",
-                  },
+                  { color: PALETTE.accent4, math: "\\vec{n}", label: "Normal vector" },
+                  { color: PALETTE.accent1, math: "\\vec{i}", label: "Incident ray" },
+                  { color: PALETTE.accent5, math: "\\vec{r}", label: "Reflected ray" },
                 ]}
               />
             </EqCard>
@@ -191,7 +174,7 @@ export default function ReflectionLesson() {
           {/* Video */}
           <div
             className="w-full lg:w-1/2 rounded-2xl overflow-hidden"
-            style={{ border: "1px solid var(--color-border-strong)" }}
+            style={{ border: "1px solid rgba(255,255,255,0.08)" }}
           >
             <video
               src="/idklol.mp4"
@@ -199,8 +182,8 @@ export default function ReflectionLesson() {
               loop
               muted
               playsInline
-              className="w-799 h-auto object-cover overflow-clip"
-              style={{ background: "var(--color-background)" }}
+              className="w-full h-auto object-cover"
+              style={{ background: "#262626" }}
             >
               Your browser does not support the video tag.
             </video>
@@ -214,8 +197,10 @@ export default function ReflectionLesson() {
           FLAT MIRROR
       ══════════════════════════════════════════════════════════════════════ */}
       <section className="my-20 sm:my-28 flex flex-col lg:flex-row gap-10 lg:gap-16 items-start">
-        {/* Left: text column — uses gap-10 between sub-sections */}
+
+        {/* Left: text column */}
         <div className="w-full lg:w-[44%] flex flex-col gap-10">
+
           <div>
             <p
               className="text-xs font-bold uppercase tracking-[0.2em] mb-1"
@@ -228,12 +213,9 @@ export default function ReflectionLesson() {
             </h2>
           </div>
 
-          {/* --- Second law --- */}
+          {/* Second law */}
           <div className="space-y-5">
-            <p
-              className="leading-relaxed"
-              style={{ color: "var(--color-text-soft)" }}
-            >
+            <p className="leading-relaxed" style={{ color: "rgba(255,255,255,0.8)" }}>
               When a ray of light strikes a smooth surface like a mirror, it
               reflects back into the same medium following a simple geometric
               rule — the <em>law of reflection</em>:
@@ -247,24 +229,13 @@ export default function ReflectionLesson() {
               </div>
               <Legend
                 items={[
-                  {
-                    color: PALETTE.accent1,
-                    math: "\\theta_i",
-                    label: "Incident Angle",
-                  },
-                  {
-                    color: PALETTE.accent2,
-                    math: "\\theta_{re}",
-                    label: "Reflected Angle",
-                  },
+                  { color: PALETTE.accent1, math: "\\theta_i",    label: "Incident Angle" },
+                  { color: PALETTE.accent2, math: "\\theta_{re}", label: "Reflected Angle" },
                 ]}
               />
             </EqCard>
 
-            <p
-              className="leading-relaxed"
-              style={{ color: "var(--color-text-soft)" }}
-            >
+            <p className="leading-relaxed" style={{ color: "rgba(255,255,255,0.8)" }}>
               This law tells us that light reflects symmetrically with respect
               to the <T color={PALETTE.accent4}>normal line</T> — the line
               perpendicular to the surface at the point of contact. Light
@@ -276,18 +247,12 @@ export default function ReflectionLesson() {
             </p>
           </div>
 
-          {/* --- Vector form --- */}
+          {/* Vector form */}
           <div className="space-y-5">
-            <h3
-              className="text-xl font-semibold"
-              style={{ color: PALETTE.accent3 }}
-            >
+            <h3 className="text-xl font-semibold" style={{ color: PALETTE.accent3 }}>
               Computing Reflection (Vector Form)
             </h3>
-            <p
-              className="leading-relaxed"
-              style={{ color: "var(--color-text-soft)" }}
-            >
+            <p className="leading-relaxed" style={{ color: "rgba(255,255,255,0.8)" }}>
               Instead of measuring angles, computers use the{" "}
               <strong>Vector Reflection Formula</strong>. Given the{" "}
               <T color={PALETTE.accent1}>incoming light vector</T> and the
@@ -303,88 +268,54 @@ export default function ReflectionLesson() {
               </div>
               <Legend
                 items={[
-                  {
-                    color: PALETTE.accent5,
-                    math: "\\vec{r}",
-                    label: "Reflected direction vector",
-                  },
-                  {
-                    color: PALETTE.accent1,
-                    math: "\\vec{i}",
-                    label: "Incident direction vector",
-                  },
-                  {
-                    color: PALETTE.accent4,
-                    math: "\\hat{n}",
-                    label: "Unit normal vector of the surface",
-                  },
+                  { color: PALETTE.accent5, math: "\\vec{r}", label: "Reflected direction vector" },
+                  { color: PALETTE.accent1, math: "\\vec{i}", label: "Incident direction vector" },
+                  { color: PALETTE.accent4, math: "\\hat{n}", label: "Unit normal vector of the surface" },
                 ]}
               />
             </EqCard>
           </div>
 
-          {/* --- Wave model --- */}
+          {/* Wave model */}
           <div className="space-y-5">
-            <h3
-              className="text-xl font-semibold"
-              style={{ color: PALETTE.accent3 }}
-            >
+            <h3 className="text-xl font-semibold" style={{ color: PALETTE.accent3 }}>
               The Wave Model of Light
             </h3>
-            <p
-              className="leading-relaxed"
-              style={{ color: "var(--color-text-soft)" }}
-            >
-              While we often draw light as straight geometric &ldquo;rays&rdquo;
-              to calculate angles easily, light actually travels as an
-              oscillating electromagnetic wave. We can describe the displacement
-              of this wave over time and distance using the standard wave
-              equation:
+            <p className="leading-relaxed" style={{ color: "rgba(255,255,255,0.8)" }}>
+              While we often draw light as straight geometric &ldquo;rays&rdquo; to
+              calculate angles easily, light actually travels as an oscillating
+              electromagnetic wave. We can describe the displacement of this
+              wave over time and distance using the standard wave equation:
             </p>
 
             <EqCard>
               <div className="flex justify-center py-1 text-2xl">
                 <Math
-                  math={String.raw`y(x, t) = \textcolor{${PALETTE.accent1}}{A} \sin(\textcolor{${PALETTE.accent3}}{k}x - \textcolor{${PALETTE.accent6}}{\omega} t)`}
+                  math={String.raw`y(x, t) = \textcolor{${PALETTE.accent1}}{A} \sin(\textcolor{${PALETTE.accent3}}{k}x - \textcolor{${C_ORANGE}}{\omega} t)`}
                 />
               </div>
               <Legend
                 items={[
-                  {
-                    color: PALETTE.accent1,
-                    math: "A",
-                    label: "Amplitude — height of the wave",
-                  },
-                  {
-                    color: PALETTE.accent3,
-                    math: "k",
-                    label: "Wavenumber — how tight the peaks are",
-                  },
-                  {
-                    color: PALETTE.accent6,
-                    math: "\\omega",
-                    label: "Angular frequency — how fast it pulses",
-                  },
+                  { color: PALETTE.accent1, math: "A",        label: "Amplitude — height of the wave" },
+                  { color: PALETTE.accent3, math: "k",        label: "Wavenumber — how tight the peaks are" },
+                  { color: C_ORANGE,        math: "\\omega",  label: "Angular frequency — how fast it pulses" },
                 ]}
               />
             </EqCard>
 
-            <p
-              className="leading-relaxed"
-              style={{ color: "var(--color-text-soft)" }}
-            >
+            <p className="leading-relaxed" style={{ color: "rgba(255,255,255,0.8)" }}>
               When the wave hits the mirror, its continuous phase reflects
               perfectly. Because it stays in the same medium (like air), its{" "}
-              <T color={PALETTE.accent6}>angular frequency</T> and speed remain
+              <T color={C_ORANGE}>angular frequency</T> and speed remain
               completely unchanged.
             </p>
           </div>
 
-          {/* --- Toggle --- */}
+          {/* Toggle buttons */}
           <div className="space-y-3">
             <div className="flex gap-3">
               {[
-                { label: "Ray Model", value: false },
+                { label: "Ray Model",  value: false },
                 { label: "Wave Model", value: true },
               ].map(({ label, value }) => (
                 <button
@@ -395,13 +326,13 @@ export default function ReflectionLesson() {
                     showWave === value
                       ? {
                           background: PALETTE.accent3,
-                          color: "var(--color-on-accent)",
-                          boxShadow: "0 4px 0 var(--color-accent-3-shadow)",
+                          color: "#111",
+                          boxShadow: "0 4px 0 #b89b00",
                         }
                       : {
-                          background: "var(--color-surface-strong)",
-                          color: "var(--color-text-muted)",
-                          boxShadow: "0 4px 0 var(--color-shadow-strong)",
+                          background: "rgba(255,255,255,0.08)",
+                          color: "rgba(255,255,255,0.6)",
+                          boxShadow: "0 4px 0 rgba(0,0,0,0.3)",
                         }
                   }
                 >
@@ -409,10 +340,7 @@ export default function ReflectionLesson() {
                 </button>
               ))}
             </div>
-            <p
-              className="text-sm italic"
-              style={{ color: "var(--color-text-faint)" }}
-            >
+            <p className="text-sm italic" style={{ color: "rgba(255,255,255,0.4)" }}>
               Click the buttons above to toggle the view in the playground.
             </p>
           </div>
@@ -420,11 +348,7 @@ export default function ReflectionLesson() {
 
         {/* Right: playground */}
         <div className="w-full lg:w-[56%] flex items-start justify-center">
-          <FlatMirrorReflectionPlayground
-            width={780}
-            height={800}
-            showWave={showWave}
-          />
+          <FlatMirrorReflectionPlayground width={780} height={800} showWave={showWave} />
         </div>
       </section>
 
@@ -434,6 +358,7 @@ export default function ReflectionLesson() {
           CONVEX MIRROR
       ══════════════════════════════════════════════════════════════════════ */}
       <section className="my-20 sm:my-28 flex flex-col lg:flex-row gap-10 lg:gap-16 items-start">
+
         <div className="w-full lg:w-[44%] flex flex-col gap-10">
           <div>
             <p
@@ -448,10 +373,7 @@ export default function ReflectionLesson() {
           </div>
 
           <div className="space-y-5">
-            <p
-              className="leading-relaxed"
-              style={{ color: "var(--color-text-soft)" }}
-            >
+            <p className="leading-relaxed" style={{ color: "rgba(255,255,255,0.8)" }}>
               What happens when the mirror isn&apos;t flat? In a{" "}
               <strong>Convex Mirror</strong> — a surface that bulges outward
               towards the light source — the basic Law of Reflection still
@@ -460,52 +382,31 @@ export default function ReflectionLesson() {
               in one uniform direction.
             </p>
 
-            <p
-              className="leading-relaxed"
-              style={{ color: "var(--color-text-soft)" }}
-            >
+            <p className="leading-relaxed" style={{ color: "rgba(255,255,255,0.8)" }}>
               For a spherical curved mirror, the{" "}
               <T color={PALETTE.accent4}>normal vector</T> is found by drawing a
               straight line from the mirror&apos;s{" "}
-              <T color={PALETTE.accent6}>Center of Curvature C</T> to the exact
-              point where the light hits the surface,{" "}
-              <T color={PALETTE.accent1}>
-                P<sub>hit</sub>
-              </T>
-              :
+              <T color={C_ORANGE}>Center of Curvature C</T> to the exact point
+              where the light hits the surface,{" "}
+              <T color={PALETTE.accent1}>P<sub>hit</sub></T>:
             </p>
 
             <EqCard>
               <div className="flex justify-center py-1 text-2xl">
                 <Math
-                  math={String.raw`\textcolor{${PALETTE.accent4}}{\hat{n}} = \frac{\textcolor{${PALETTE.accent1}}{P_{hit}} - \textcolor{${PALETTE.accent6}}{C}}{||\textcolor{${PALETTE.accent1}}{P_{hit}} - \textcolor{${PALETTE.accent6}}{C}||}`}
+                  math={String.raw`\textcolor{${PALETTE.accent4}}{\hat{n}} = \frac{\textcolor{${PALETTE.accent1}}{P_{hit}} - \textcolor{${C_ORANGE}}{C}}{||\textcolor{${PALETTE.accent1}}{P_{hit}} - \textcolor{${C_ORANGE}}{C}||}`}
                 />
               </div>
               <Legend
                 items={[
-                  {
-                    color: PALETTE.accent4,
-                    math: "\\hat{n}",
-                    label: "Normal vector at the hit point",
-                  },
-                  {
-                    color: PALETTE.accent1,
-                    math: "P_{hit}",
-                    label: "Point where the ray hits the surface",
-                  },
-                  {
-                    color: PALETTE.accent6,
-                    math: "C",
-                    label: "Center of Curvature",
-                  },
+                  { color: PALETTE.accent4, math: "\\hat{n}", label: "Normal vector at the hit point" },
+                  { color: PALETTE.accent1, math: "P_{hit}",  label: "Point where the ray hits the surface" },
+                  { color: C_ORANGE,        math: "C",        label: "Center of Curvature" },
                 ]}
               />
             </EqCard>
 
-            <p
-              className="leading-relaxed"
-              style={{ color: "var(--color-text-soft)" }}
-            >
+            <p className="leading-relaxed" style={{ color: "rgba(255,255,255,0.8)" }}>
               Because the <T color={PALETTE.accent4}>normal</T> angles outward
               depending on where the ray strikes, incoming parallel rays will
               bounce outward in different directions — they{" "}
@@ -516,12 +417,9 @@ export default function ReflectionLesson() {
             </p>
           </div>
 
-          <p
-            className="text-sm italic"
-            style={{ color: "var(--color-text-faint)" }}
-          >
-            Try moving the laser up and down to see how the curved normal
-            changes the reflection.
+          <p className="text-sm italic" style={{ color: "rgba(255,255,255,0.4)" }}>
+            Try moving the laser up and down to see how the curved normal changes
+            the reflection.
           </p>
         </div>
 
@@ -541,6 +439,7 @@ export default function ReflectionLesson() {
           CONCAVE MIRROR
       ══════════════════════════════════════════════════════════════════════ */}
       <section className="my-20 sm:my-28 flex flex-col lg:flex-row gap-10 lg:gap-16 items-start">
+
         <div className="w-full lg:w-[44%] flex flex-col gap-10">
           <div>
             <p
@@ -556,10 +455,7 @@ export default function ReflectionLesson() {
 
           {/* Intro + focal length */}
           <div className="space-y-5">
-            <p
-              className="leading-relaxed"
-              style={{ color: "var(--color-text-soft)" }}
-            >
+            <p className="leading-relaxed" style={{ color: "rgba(255,255,255,0.8)" }}>
               Now flip the curve. A <strong>Concave Mirror</strong> — a surface
               that curves <em>inward</em>, like the inside of a bowl — follows
               the exact same Law of Reflection. But because the normals now
@@ -567,12 +463,9 @@ export default function ReflectionLesson() {
               <strong>converge</strong>.
             </p>
 
-            <p
-              className="leading-relaxed"
-              style={{ color: "var(--color-text-soft)" }}
-            >
-              Every ray arriving parallel to the optical axis reflects and
-              passes through a single <strong>Focal Point (F)</strong>. The{" "}
+            <p className="leading-relaxed" style={{ color: "rgba(255,255,255,0.8)" }}>
+              Every ray arriving parallel to the optical axis reflects and passes
+              through a single <strong>Focal Point (F)</strong>. The{" "}
               <T color={PALETTE.accent2}>focal length</T>{" "}
               <Math math={`\\textcolor{${PALETTE.accent2}}{f}`} /> is directly
               tied to the mirror&apos;s{" "}
@@ -589,41 +482,28 @@ export default function ReflectionLesson() {
               <Legend
                 items={[
                   { color: PALETTE.accent2, math: "f", label: "Focal length" },
-                  {
-                    color: PALETTE.accent5,
-                    math: "R",
-                    label: "Radius of curvature",
-                  },
+                  { color: PALETTE.accent5, math: "R", label: "Radius of curvature" },
                 ]}
               />
             </EqCard>
 
-            <p
-              className="leading-relaxed"
-              style={{ color: "var(--color-text-soft)" }}
-            >
-              This convergence makes concave mirrors extremely powerful — used
-              in <strong>telescopes</strong> to gather and focus starlight, in{" "}
-              <strong>satellite dishes</strong> to focus incoming signals, and
-              in <strong>makeup mirrors</strong> that magnify your face because
-              an object placed closer than the focal point produces a large,
-              upright, virtual image.
+            <p className="leading-relaxed" style={{ color: "rgba(255,255,255,0.8)" }}>
+              This convergence makes concave mirrors extremely powerful — used in{" "}
+              <strong>telescopes</strong> to gather and focus starlight, in{" "}
+              <strong>satellite dishes</strong> to focus incoming signals, and in{" "}
+              <strong>makeup mirrors</strong> that magnify your face because an
+              object placed closer than the focal point produces a large, upright,
+              virtual image.
             </p>
           </div>
 
           {/* Mirror equation */}
           <div className="space-y-5">
-            <h3
-              className="text-xl font-semibold"
-              style={{ color: PALETTE.accent3 }}
-            >
+            <h3 className="text-xl font-semibold" style={{ color: PALETTE.accent3 }}>
               The Mirror Equation
             </h3>
 
-            <p
-              className="leading-relaxed"
-              style={{ color: "var(--color-text-soft)" }}
-            >
+            <p className="leading-relaxed" style={{ color: "rgba(255,255,255,0.8)" }}>
               Knowing that rays converge isn&apos;t enough — we also want to
               know <em>where</em> the image forms. The{" "}
               <strong>Mirror Equation</strong> relates the{" "}
@@ -639,34 +519,16 @@ export default function ReflectionLesson() {
               </div>
               <Legend
                 items={[
-                  {
-                    color: PALETTE.accent2,
-                    math: "f",
-                    label: "Focal length of the mirror",
-                  },
-                  {
-                    color: PALETTE.accent3,
-                    math: "d_o",
-                    label: "Object distance from the mirror",
-                  },
-                  {
-                    color: PALETTE.accent5,
-                    math: "d_i",
-                    label: "Image distance from the mirror",
-                  },
+                  { color: PALETTE.accent2, math: "f",   label: "Focal length of the mirror" },
+                  { color: PALETTE.accent3, math: "d_o", label: "Object distance from the mirror" },
+                  { color: PALETTE.accent5, math: "d_i", label: "Image distance from the mirror" },
                 ]}
               />
             </EqCard>
 
-            <p
-              className="leading-relaxed"
-              style={{ color: "var(--color-text-soft)" }}
-            >
-              When{" "}
-              <T color={PALETTE.accent5}>
-                d<sub>i</sub>
-              </T>{" "}
-              comes out positive, the image forms in front of the mirror — a{" "}
+            <p className="leading-relaxed" style={{ color: "rgba(255,255,255,0.8)" }}>
+              When <T color={PALETTE.accent5}>d<sub>i</sub></T> comes out
+              positive, the image forms in front of the mirror — a{" "}
               <strong>real image</strong> you could project onto a screen. When
               it comes out negative, the image is behind the mirror — a{" "}
               <strong>virtual image</strong>, like the one you see in a flat
@@ -674,10 +536,7 @@ export default function ReflectionLesson() {
             </p>
           </div>
 
-          <p
-            className="text-sm italic"
-            style={{ color: "var(--color-text-faint)" }}
-          >
+          <p className="text-sm italic" style={{ color: "rgba(255,255,255,0.4)" }}>
             Move the laser toward and away from the focal point — watch what
             happens to where the reflected rays meet.
           </p>
@@ -699,10 +558,7 @@ export default function ReflectionLesson() {
           CONCLUSION
       ══════════════════════════════════════════════════════════════════════ */}
       <section className="my-20 sm:my-28 max-w-3xl mx-auto text-center space-y-5">
-        <p
-          className="leading-relaxed text-lg"
-          style={{ color: "var(--color-text-emphasis)" }}
-        >
+        <p className="leading-relaxed text-lg" style={{ color: "rgba(255,255,255,0.75)" }}>
           Together, the laws of reflection fully describe how light behaves when
           it encounters any smooth surface — whether perfectly flat or curved.
           As we have seen, whether we model light as a simple geometric ray or
@@ -710,10 +566,7 @@ export default function ReflectionLesson() {
           predict the direction of reflected light and construct precise optical
           models.
         </p>
-        <p
-          className="leading-relaxed"
-          style={{ color: "var(--color-text-dim)" }}
-        >
+        <p className="leading-relaxed" style={{ color: "rgba(255,255,255,0.55)" }}>
           In this article, these physical laws and vector mathematics are
           applied in real time to trace light paths as they interact with
           different reflective surfaces — showing that even the most advanced
@@ -727,11 +580,10 @@ export default function ReflectionLesson() {
       <div className="flex justify-end pb-16">
         <Link
           href="/lessons/reflection-of-light/reflection-of-light-MCQ"
-          className="inline-flex items-center gap-3 px-10 py-4 rounded-xl font-bold uppercase tracking-wider transition-all hover:brightness-110 active:translate-y-0.5"
+          className="inline-flex items-center gap-3 px-10 py-4 rounded-xl font-bold uppercase tracking-wider text-black transition-all hover:brightness-110 active:translate-y-0.5"
           style={{
             background: PALETTE.accent3,
-            boxShadow: "0 4px 0 var(--color-accent-3-shadow)",
-            color: "var(--color-on-accent)",
+            boxShadow: "0 4px 0 #b89b00",
           }}
         >
           Practice Reflection
