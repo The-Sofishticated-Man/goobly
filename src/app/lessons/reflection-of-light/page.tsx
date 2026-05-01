@@ -3,7 +3,7 @@
 import { useState } from "react";
 import FlatMirrorReflectionPlayground from "@/components/FlatMirrorReflectionPlayground";
 import Math from "@/components/Math";
-import Divider from "@/components/Divider/Divider";
+import Divider from "@/components/Divider";
 import { PALETTE } from "@/lib/colors";
 import ConvexMirrorReflectionPlayground from "@/components/ConvexMirrorReflectionPlayground";
 import Link from "next/link";
