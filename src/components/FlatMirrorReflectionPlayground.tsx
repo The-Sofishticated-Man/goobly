@@ -1,9 +1,5 @@
 "use client";
 import LaserPointer from "@/entities/LaserPointer";
-import {
-  LASER_SIZE_MULTIPLIER,
-  LASER_BEAM_OFFSET,
-} from "@/app/configs/laserPointerConfig";
 import FlatMirror from "@/entities/FlatMirror";
 import {
   MIRROR_THICKNESS,
@@ -13,8 +9,11 @@ import {
 import { Ray } from "@/lib/types";
 import { raySegmentReflection } from "@/lib/physics";
 import { PALETTE } from "@/lib/colors";
+import { createLaserBeam } from "@/lib/laser";
+import { useAnimationTime } from "@/app/hooks/useAnimationTime";
+import { useResponsiveStageSize } from "@/app/hooks/useResponsiveStageSize";
 import { Layer, Rect, Stage } from "react-konva";
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState } from "react";
 import { useImage } from "react-konva-utils";
 import WaveBeam from "@/entities/WaveBeam";
 
@@ -40,68 +39,27 @@ export default function FlatMirrorReflectionPlayground({
   height?: number;
   showWave?: boolean;
 }) {
-  const [containerSize] = useState({
-    width: width || 500,
-    height: height || 400,
+  const { stageWidth, stageHeight } = useResponsiveStageSize({
+    width,
+    height,
   });
-  const [windowSize, setWindowSize] = useState({
-    width: typeof window !== "undefined" ? window.innerWidth : 1024,
-    height: typeof window !== "undefined" ? window.innerHeight : 768,
-  });
+  const time = useAnimationTime();
 
-  const [time, setTime] = useState(0);
-
-  // --- NEW: State to track if the wave should be shown ---
-  useEffect(() => {
-    const handleResize = () => {
-      setWindowSize({ width: window.innerWidth, height: window.innerHeight });
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  useEffect(() => {
-    let animationFrameId: number;
-    const animate = (timestamp: number) => {
-      setTime(timestamp / 1000);
-      animationFrameId = requestAnimationFrame(animate);
-    };
-    animationFrameId = requestAnimationFrame(animate);
-
-    return () => cancelAnimationFrame(animationFrameId);
-  }, []);
-
-  const responsiveWidth = Math.min(
-    containerSize.width,
-    Math.max(250, windowSize.width * 0.9),
-  );
-  const responsiveHeight = Math.min(
-    containerSize.height,
-    Math.max(200, windowSize.height * 0.9),
-  );
-
-  const [laserPosition, setLaserPosition] = useState({
-    x: responsiveWidth / 2,
-    y: responsiveHeight / 2,
-  });
+  const [laserPosition, setLaserPosition] = useState(() => ({
+    x: stageWidth / 2,
+    y: stageHeight / 2,
+  }));
   const [laserRotation, setLaserRotation] = useState(INITIAL_LASER_ANGLE);
   const [debug, setDebug] = useState(false);
   const [image] = useImage("/laserPointer.svg");
 
   const beam = useMemo<Ray | null>(() => {
-    if (!image) return null;
-    const beamStartX =
-      (image.width * LASER_SIZE_MULTIPLIER) / 2 + LASER_BEAM_OFFSET;
-    const rad = (laserRotation * Math.PI) / 180;
-    return {
-      origin: {
-        x: laserPosition.x + beamStartX * Math.cos(rad),
-        y: laserPosition.y + beamStartX * Math.sin(rad),
-      },
-      direction: { x: Math.cos(rad), y: Math.sin(rad) },
-    };
-  }, [laserPosition.x, laserPosition.y, laserRotation, image]);
+    return createLaserBeam({
+      image,
+      position: laserPosition,
+      rotation: laserRotation,
+    });
+  }, [image, laserPosition, laserRotation]);
 
   const hitDistance = useMemo(() => {
     if (!beam) return null;
@@ -111,7 +69,6 @@ export default function FlatMirrorReflectionPlayground({
 
   return (
     <>
-      {/* Updated UI Container to hold the checkbox and the new buttons */}
       <div
         style={{
           position: "absolute",
@@ -136,19 +93,18 @@ export default function FlatMirrorReflectionPlayground({
 
       <div className="w-full h-full flex justify-center items-center">
         <Stage
-          width={responsiveWidth}
-          height={responsiveHeight}
+          width={stageWidth}
+          height={stageHeight}
           background={PALETTE.background}
         >
           <Layer>
             <Rect
-              width={responsiveWidth}
-              height={responsiveHeight}
+              width={stageWidth}
+              height={stageHeight}
               stroke={PALETTE.background}
             />
             <FlatMirror beam={beam} hitDistance={hitDistance} debug={debug} />
 
-            {/* The base Ray laser pointer */}
             <LaserPointer
               position={laserPosition}
               rotation={laserRotation}
@@ -157,7 +113,6 @@ export default function FlatMirrorReflectionPlayground({
               onRotationChange={setLaserRotation}
             />
 
-            {/* --- NEW: Conditionally render the wave based on state --- */}
             {showWave && (
               <WaveBeam beam={beam} hitDistance={hitDistance} time={time} />
             )}

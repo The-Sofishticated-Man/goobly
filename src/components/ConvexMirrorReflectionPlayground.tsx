@@ -1,20 +1,19 @@
 "use client";
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState } from "react";
 import { Layer, Rect, Stage } from "react-konva";
 import { useImage } from "react-konva-utils";
 import LaserPointer from "@/entities/LaserPointer";
 import ConvexMirror from "@/entities/ConvexMirror";
 import WaveBeam from "@/entities/WaveBeam";
 import {
-  LASER_SIZE_MULTIPLIER,
-  LASER_BEAM_OFFSET,
-} from "@/app/configs/laserPointerConfig";
-import {
   CONVEX_MIRROR_LENGTH,
   CONVEX_MIRROR_POSITION,
   CONVEX_MIRROR_RADIUS,
   CONVEX_MIRROR_THICKNESS,
 } from "@/app/configs/convexMirrorConfig";
+import { useAnimationTime } from "@/app/hooks/useAnimationTime";
+import { useResponsiveStageSize } from "@/app/hooks/useResponsiveStageSize";
+import { createLaserBeam } from "@/lib/laser";
 import { rayCircleArcReflection } from "@/lib/physics";
 import { Ray } from "@/lib/types";
 
@@ -51,101 +50,34 @@ export default function ConvexMirrorReflectionPlayground({
 }) {
   void module;
 
-  const [containerSize] = useState({
-    width: width || 500,
-    height: height || 400,
+  const { stageWidth, stageHeight } = useResponsiveStageSize({
+    width,
+    height,
   });
-  const [windowSize, setWindowSize] = useState({
-    width: typeof window !== "undefined" ? window.innerWidth : 1024,
-    height: typeof window !== "undefined" ? window.innerHeight : 768,
-  });
+  const time = useAnimationTime();
 
-  const [time, setTime] = useState(0);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setWindowSize({ width: window.innerWidth, height: window.innerHeight });
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  useEffect(() => {
-    let animationFrameId: number;
-    const animate = (timestamp: number) => {
-      setTime(timestamp / 1000);
-      animationFrameId = requestAnimationFrame(animate);
-    };
-    animationFrameId = requestAnimationFrame(animate);
-
-    return () => cancelAnimationFrame(animationFrameId);
-  }, []);
-
-  // Back to normal responsive width scaling
-  const responsiveWidth = Math.min(
-    containerSize.width,
-    Math.max(250, windowSize.width * 0.9),
-  );
-
-  const responsiveHeight = Math.min(
-    containerSize.height,
-    Math.max(200, windowSize.height * 0.9),
-  );
-
-  const [laserPosition, setLaserPosition] = useState({
-    x: responsiveWidth / 4, // Tucked the laser slightly further left
-    y: responsiveHeight / 1.5,
-  });
+  const [laserPosition, setLaserPosition] = useState(() => ({
+    x: stageWidth / 4, // Tucked the laser slightly further left
+    y: stageHeight / 1.5,
+  }));
   const [laserRotation, setLaserRotation] = useState(INITIAL_LASER_ANGLE);
   const [debug, setDebug] = useState(false);
   const [image] = useImage("/laserPointer.svg");
 
   const beam = useMemo<Ray | null>(() => {
-    if (!image) return null;
+    return createLaserBeam({
+      image,
+      position: laserPosition,
+      rotation: laserRotation,
+    });
+  }, [image, laserPosition, laserRotation]);
 
-    const beamStartX =
-      (image.width * LASER_SIZE_MULTIPLIER) / 2 + LASER_BEAM_OFFSET;
-    const radians = (laserRotation * Math.PI) / 180;
-
-    return {
-      origin: {
-        x: laserPosition.x + beamStartX * Math.cos(radians),
-        y: laserPosition.y + beamStartX * Math.sin(radians),
-      },
-      direction: { x: Math.cos(radians), y: Math.sin(radians) },
-    };
-  }, [laserPosition.x, laserPosition.y, laserRotation, image]);
-
-  const hitInfo = useMemo(() => {
+  const reflection = useMemo(() => {
     if (!beam) return null;
-
-    const reflection = rayCircleArcReflection(beam, CONVEX_MIRROR_ARC);
-    const distance = reflection?.distance ?? null;
-
-    let reflectedDirection = null;
-    if (distance !== null) {
-      const hitX = beam.origin.x + beam.direction.x * distance;
-      const hitY = beam.origin.y + beam.direction.y * distance;
-
-      const nx = hitX - CONVEX_MIRROR_ARC.center.x;
-      const ny = hitY - CONVEX_MIRROR_ARC.center.y;
-
-      const len = Math.sqrt(nx * nx + ny * ny);
-      const nux = nx / len;
-      const nuy = ny / len;
-
-      const dot = beam.direction.x * nux + beam.direction.y * nuy;
-      reflectedDirection = {
-        x: beam.direction.x - 2 * dot * nux,
-        y: beam.direction.y - 2 * dot * nuy,
-      };
-    }
-
-    return { distance, reflectedDirection };
+    return rayCircleArcReflection(beam, CONVEX_MIRROR_ARC);
   }, [beam]);
 
-  const hitDistance = hitInfo?.distance ?? null;
+  const hitDistance = reflection?.distance ?? null;
 
   return (
     <>
@@ -160,13 +92,9 @@ export default function ConvexMirrorReflectionPlayground({
         </label>
       </div>
       <div className="w-full h-full flex justify-center items-center">
-        <Stage width={responsiveWidth} height={responsiveHeight}>
+        <Stage width={stageWidth} height={stageHeight}>
           <Layer>
-            <Rect
-              width={responsiveWidth}
-              height={responsiveHeight}
-              fill={"#262626"}
-            />
+            <Rect width={stageWidth} height={stageHeight} fill={"#262626"} />
             <ConvexMirror beam={beam} hitDistance={hitDistance} debug={debug} />
             <LaserPointer
               position={laserPosition}
@@ -181,7 +109,7 @@ export default function ConvexMirrorReflectionPlayground({
                 beam={beam}
                 hitDistance={hitDistance}
                 time={time}
-                reflectedDirection={hitInfo?.reflectedDirection}
+                reflectedDirection={reflection?.reflected ?? null}
               />
             )}
           </Layer>
