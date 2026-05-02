@@ -16,7 +16,7 @@ export default function Legend({
       {items.map(({ color, math, label }) => (
         <li key={label} className="flex items-center gap-2.5">
           <span
-            className="w-2 h-2 rounded-full flex-shrink-0"
+            className="w-2 h-2 rounded-full shrink-0"
             style={{
               background: color,
             }}
