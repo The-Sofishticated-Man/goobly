@@ -35,12 +35,12 @@ export default function ReflectionLesson() {
             Light Reflection
           </h1>
           <h2
-            className="text-2xl sm:text-3xl font-light capitalize mb-12"
+            className="text-2xl sm:text-3xl font-light capitalize mb-6"
             style={{ color: "rgba(255,255,255,0.55)" }}
           >
             Reflection on a Plane Mirror
           </h2>
-          <h4 className="font-semibold text-lg mb-4">
+          <h4 className="font-semibold text-lg mb-8">
             <ColoredText color={PALETTE.accent3}>A. Naioua</ColoredText> &{" "}
             <ColoredText color={PALETTE.accent3}>I. Lameche</ColoredText> &{" "}
             <ColoredText color={PALETTE.accent3}>
